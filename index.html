@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeanStock đã chuyển địa chỉ</title>
+<link rel="canonical" href="https://beanstock-app.vercel.app/">
+<style>body{font-family:system-ui,sans-serif;background:#F4F1EA;color:#181310;margin:0;padding:32px 16px}main{max-width:520px;margin:0 auto}a{color:#B85014}</style>
+</head>
+<body>
+<main>
+<h1 style="font-size:20px">BeanStock đã chuyển sang địa chỉ mới</h1>
+<p>Địa chỉ mới: <a href="https://beanstock-app.vercel.app/">beanstock-app.vercel.app</a>. Đang chuyển trang…</p>
+</main>
+<script>
+var u='https://beanstock-app.vercel.app/';
+try{
+  var d=localStorage.getItem('beanstock-v1');
+  if(d&&!localStorage.getItem('beanstock-moved')){
+    u+='#bsimport='+encodeURIComponent(btoa(unescape(encodeURIComponent(d))));
+    localStorage.setItem('beanstock-moved','1');
+  }
+}catch(e){}
+location.replace(u);
+</script>
+</body>
+</html>
