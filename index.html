@@ -225,6 +225,18 @@ body.ux-off .ux-box{outline:none}
 .rtable input[type=date]{width:150px}
 .field input[type=date]{font-family:var(--mono)}
 
+.adjl{margin-top:10px;font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-on-dark)}
+.adjl+.adj{margin-top:4px}
+.ci .dr{color:#FCD34D}
+.thb{font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;gap:4px;align-items:center;min-height:28px;padding:0}
+.thb:hover{color:var(--ink)}
+th[aria-sort="ascending"] .thb::after{content:"↑"}
+th[aria-sort="descending"] .thb::after{content:"↓"}
+.sortsel{display:none}
+.aph{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.rtable select{border:1px solid var(--line-strong);border-radius:var(--r-sm);min-height:38px;padding:4px;background:var(--bg-surface)}
+.og[hidden],.order-line[hidden]{display:none!important}
+
 /* ---------- Mode 2 ---------- */
 .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
 .toolbar h1{margin:0;font-size:20px;font-weight:600;letter-spacing:-.3px}
@@ -395,7 +407,7 @@ td .meta{font-size:12px;color:var(--muted);line-height:1.45}
 .adj button b{font-size:16px}.adj button small{font-size:10.5px;font-weight:400;opacity:.85;white-space:nowrap}
 .adj .m5,.adj .m1{background:#2A1515;color:#FECACA;border-color:#4A1F1F}
 .adj .p1,.adj .p5{background:#11261A;color:#BBF7D0;border-color:#1F4A2E}
-.st{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:6px;margin-top:6px}
+.st{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
 .st button{border:1px solid var(--bg-inverse-3);color:var(--ink-on-dark);border-radius:var(--r-sm);padding:6px 4px;font-weight:500;font-size:12.5px;min-height:44px;line-height:1.25;min-width:0}
 .st button:hover{background:var(--bg-inverse-2)}
 .st .ok[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
@@ -489,6 +501,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--line-strong);bo
   .ptable .pn{display:block;white-space:normal;font-size:11.5px;color:var(--muted);margin-top:2px}
   .ptable td small{display:none}
   .frow{grid-template-columns:1fr}
+  .sortsel{display:grid}
   .sumrow{grid-template-columns:1fr}
   .btn,.mini{min-height:44px}
   .toolbar .acts2 .btn{flex:1 1 140px}
@@ -516,7 +529,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--line-strong);bo
 
 <header class="top">
   <div class="top-in">
-    <div class="brand"><span class="logo" data-ic="bean" data-s="18"></span><span class="bn">BeanStock</span><span class="ver">V3.3</span></div>
+    <div class="brand"><span class="logo" data-ic="bean" data-s="18"></span><span class="bn">BeanStock</span><span class="ver">V3.4</span></div>
     <nav class="tabs" role="tablist" aria-label="Không gian làm việc">
       <button class="tab" role="tab" id="tab1" aria-controls="v1" data-mode="1" type="button"><span data-ic="layers"></span>1. Thiết lập kho</button>
       <button class="tab" role="tab" id="tab2" aria-controls="v2" data-mode="2" type="button"><span data-ic="chart"></span>2. Quản lý &amp; Đặt hàng</button>
@@ -590,8 +603,9 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--line-strong);bo
           <div class="search"><span data-ic="search"></span><input id="q" type="search" placeholder="Tìm theo tên, mã SKU, nhà cung cấp…" aria-label="Tìm nguyên liệu"><button class="clr" id="qClear" type="button" aria-label="Xóa nội dung tìm kiếm" hidden><span data-ic="x"></span></button></div>
           <div class="chips" id="cats" aria-label="Lọc theo nhóm"></div>
           <div class="chips" id="stFilter" style="margin-top:4px" aria-label="Lọc theo trạng thái"></div>
+          <div class="field sortsel" style="margin-top:6px"><label for="tSortSel">Sắp xếp</label><select id="tSortSel"><option value="">Mặc định</option><option value="status:1">Cần xử lý trước</option><option value="days:1">Sắp hết hàng nhanh nhất</option><option value="name:1">Tên A–Z</option></select></div>
         </div>
-        <div class="tbl-wrap"><table id="invTable"><thead><tr><th>Nguyên liệu</th><th>Tồn / Định mức</th><th>Trạng thái</th><th style="text-align:right">Thao tác</th></tr></thead><tbody id="tbody"></tbody></table></div>
+        <div class="tbl-wrap"><table id="invTable"><thead><tr><th data-sort="name" aria-sort="none"><button type="button" class="thb">Nguyên liệu</button></th><th data-sort="days" aria-sort="none"><button type="button" class="thb">Tồn / Định mức</button></th><th data-sort="status" aria-sort="none"><button type="button" class="thb">Trạng thái</button></th><th style="text-align:right">Thao tác</th></tr></thead><tbody id="tbody"></tbody></table></div>
       </div>
       <div class="stack">
         <div class="card ux-box" id="reorderBox">
@@ -753,14 +767,14 @@ function setQty(i,next,opts={}){
     if(!i.batches.length&&i.qty>0)i.batches.push({id:'b-base-'+i.id,lot:'Tồn chưa ghi hạn',qty:i.qty,expDate:null});
     i.batches.push({id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),lot:opts.lot||('Lô nhập '+new Date().toLocaleDateString('vi-VN')),qty:diff,expDate});
   }else if(i.batches.length&&diff){
-    if(diff<0){let need=-diff;[...i.batches].sort(byExp).forEach(b=>{if(need<=0)return;const t=Math.min(b.qty,need);b.qty=round2(b.qty-t);need=round2(need-t);});}
+    if(diff<0){let need=-diff;const exd=b=>b.expDate&&bExp(b)<0?1:0;(opts.skipExpired?[...i.batches].sort((a,b)=>exd(a)-exd(b)||byExp(a,b)):[...i.batches].sort(byExp)).forEach(b=>{if(need<=0)return;const t=Math.min(b.qty,need);b.qty=round2(b.qty-t);need=round2(need-t);});}
     else{const tgt=i.batches.slice().sort(byExp).pop();tgt.qty=round2(tgt.qty+diff);}
   }
   i.qty=next;syncItemExp(i);
 }
 function seedItem(x){const it={...x,sku:SKU[x.id],kw:[...x.kw],batches:(x.batches||[]).map(b=>({id:b.id,lot:b.lot,qty:b.qty,expDate:addDaysISO(b.exp)})),active:true,fast:FAST.includes(x.id),minCustom:false};syncItemExp(it);return it;}
 function fresh(){return {items:SEED.map(seedItem), mode:1, ux:false, dev:'phone',
-  wiz:{step:1, packs:PACKS.map(p=>p.id), level:'mid', done:false}, touched:[], cart:{}, orders:[], logs:[], shiftBase:{}, shiftStart:null, lastShift:null, actor:'Minh Tuấn (Barista)', staff:['Minh Tuấn'], currentStaff:'Minh Tuấn', noticeLocal:false}}
+  wiz:{step:1, packs:PACKS.map(p=>p.id), level:'mid', done:false}, touched:[], touchedHow:{}, cart:{}, orders:[], logs:[], shiftBase:{}, shiftStart:null, lastShift:null, actor:'Minh Tuấn (Barista)', staff:['Minh Tuấn'], currentStaff:'Minh Tuấn', noticeLocal:false}}
 const num=(v,d)=>{const n=Number(v);return Number.isFinite(n)?n:d;};
 /* Chuẩn hóa dữ liệu cũ (V2.4 → V3.0) trong localStorage: giữ nguyên qty/min/món tự thêm, bổ sung trường mới */
 function migrateState(raw){
@@ -822,6 +836,7 @@ function migrateState(raw){
   s.shiftStart=typeof raw.shiftStart==='string'?raw.shiftStart:null;
   if(!s.shiftStart)s.shiftBase={};
   s.noticeLocal=raw.noticeLocal===true;
+  s.touchedHow=raw.touchedHow&&typeof raw.touchedHow==='object'&&!Array.isArray(raw.touchedHow)?raw.touchedHow:{};
   return s;
 }
 let S;
@@ -839,7 +854,11 @@ const sku=i=>`<span class="sku">${esc(i&&i.sku?i.sku:'—')}</span>`;
 const activeItems=()=>S.items.filter(i=>i.active!==false);
 const fastItems=()=>activeItems().filter(i=>i.fast);
 const status=i=> i.qty<=0?'out': i.qty<i.min?'low':'ok';
-const isExp=i=>i.exp!=null&&i.exp<=4&&i.qty>0;
+/* Cận date = lô CÒN hạn trong 0–4 ngày; Quá hạn = lô đã hết hạn nhưng còn hàng (tách riêng) */
+const isExp=i=>(i.batches||[]).some(b=>b.qty>0&&b.expDate&&bExp(b)>=0&&bExp(b)<=4);
+const expiredQty=i=>round2((i.batches||[]).filter(b=>b.qty>0&&b.expDate&&bExp(b)<0).reduce((t,b)=>t+b.qty,0));
+const isExpired=i=>expiredQty(i)>0;
+const nearExp=i=>Math.min(...(i.batches||[]).filter(b=>b.qty>0&&b.expDate&&bExp(b)>=0).map(bExp));
 const expLabel=d=>d==null?'':d<0?`Quá hạn ${-d} ngày`:d===0?'Hết hạn hôm nay':`HSD còn ${d} ngày`;
 const ST_LABEL={ok:'Đủ dùng',low:'Sắp hết',out:'Hết hàng'};
 const pill=i=>`<span class="pill ${status(i)}">${ST_LABEL[status(i)]}</span>`;
@@ -854,7 +873,7 @@ const needItems=()=>activeItems().filter(i=>status(i)!=='ok'&&suggest(i)>0);
 const topupItems=()=>activeItems().filter(i=>status(i)==='ok'&&suggest(i)>0);
 const packText=(i,q)=>i.packRate>1&&q>0?` ≈ ${round2(q/i.packRate)} ${i.packUnit}`:'';
 const daysLeft=i=>i.dailyUsage>0?round2(i.qty/i.dailyUsage):null;
-const touch=id=>{if(!S.touched.includes(id))S.touched.push(id);};
+const touch=(id,how)=>{if(!S.touched.includes(id))S.touched.push(id);if(how)S.touchedHow[id]=how;};
 const nowTime=()=>new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
 const stamp=()=>new Date().toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
 const actorNow=()=>S.mode===3?('Barista: '+(S.currentStaff||'Barista')):S.mode===1?'Chủ quán':'Quản lý';
@@ -873,25 +892,40 @@ function addLog({itemId,type,delta,prevQty,nextQty,reason,actor,unitPrice,itemNa
 function applyQty(i,next,type,reason,opts={}){const prev=i.qty;setQty(i,next,opts);if(prev!==i.qty)return addLog({itemId:i.id,type,delta:round2(i.qty-prev),prevQty:prev,nextQty:i.qty,reason});return null;}
 
 /* ---- Toast + Hoàn tác ---- */
-let toastT, undoFn=null;
+/* Thông báo thường không xóa nút Hoàn tác của thao tác trước (còn hiệu lực 6 giây); thao tác gần nhất còn hoàn tác được trong Nhật ký kho */
+let toastT, undoFn=null, undoUntil=0, lastUndo=null;
 function toast(msg, undo){
-  $('#toastMsg').textContent=msg; undoFn=undo||null; $('#toastUndo').hidden=!undo;
+  const now=Date.now();
+  if(undo){undoFn=undo;undoUntil=now+6000;lastUndo={fn:undo,label:msg};}
+  const keep=!!undoFn&&now<undoUntil;
+  $('#toastMsg').textContent=msg; $('#toastUndo').hidden=!keep;
+  $('#toastUndo').title=keep&&lastUndo?'Hoàn tác: '+lastUndo.label:'';
   $('#toast').classList.add('on'); clearTimeout(toastT);
-  toastT=setTimeout(()=>{$('#toast').classList.remove('on');undoFn=null;}, undo?6000:3200);
+  toastT=setTimeout(()=>{$('#toast').classList.remove('on');undoFn=null;}, Math.max(keep?undoUntil-now:0,3200));
 }
-$('#toastUndo').onclick=()=>{const f=undoFn;undoFn=null;$('#toast').classList.remove('on');if(f)f();};
-const snapshot=()=>JSON.stringify({items:S.items,touched:S.touched,cart:S.cart,orders:S.orders,logs:S.logs,shiftBase:S.shiftBase,shiftStart:S.shiftStart,lastShift:S.lastShift,wiz:S.wiz,staff:S.staff,currentStaff:S.currentStaff});
-function restore(snap){const o=JSON.parse(snap);Object.assign(S,o);save();renderAll();toast('Đã hoàn tác thao tác vừa rồi');}
+$('#toastUndo').onclick=()=>{const f=undoFn;undoFn=null;lastUndo=null;$('#toast').classList.remove('on');if(f)f();};
+const snapshot=()=>JSON.stringify({items:S.items,touched:S.touched,touchedHow:S.touchedHow,cart:S.cart,orders:S.orders,logs:S.logs,shiftBase:S.shiftBase,shiftStart:S.shiftStart,lastShift:S.lastShift,wiz:S.wiz,staff:S.staff,currentStaff:S.currentStaff});
+function restore(snap){lastUndo=null;undoFn=null;const o=JSON.parse(snap);Object.assign(S,o);save();renderAll();toast('Đã hoàn tác thao tác vừa rồi');}
 function commit(msg, mutate, silent){const snap=snapshot();mutate();save();renderAll();if(!silent)toast(msg,()=>restore(snap));return snap;}
 function changeQty(id,delta,opts={}){
   const i=item(id);if(!i||!delta)return;
   const next=Math.max(0,round2(i.qty+delta)), realDelta=round2(next-i.qty);
   if(!realDelta){toast(`${shortName(i.name)} đang ở mức 0 — không thể trừ thêm`);return;}
   const type=opts.type||(realDelta>0?'in':'out');
+  /* Xuất dùng không được lấy hàng đã quá hạn */
+  if(type==='out'&&realDelta<0){const ex=expiredQty(i),usable=round2(i.qty-ex);
+    if(ex>0&&-realDelta>usable){blockExpired(i,ex,usable);return;}
+    if(ex>0)opts={...opts,skipExpired:true};}
   const reason=opts.reason||(realDelta>0?'Nhập bổ sung nhanh':'Xuất pha chế trong ca');
   commit(`${TYPE_LABEL[type]} ${realDelta>0?'+':''}${realDelta} ${i.unit} · ${i.sku} → còn ${next}`,()=>{
-    applyQty(i,next,type,reason,opts); if(opts.touch)touch(id);
+    applyQty(i,next,type,reason,opts); if(opts.touch)touch(id,opts.how);
   },opts.silent);
+}
+
+function blockExpired(i,ex,usable){
+  openModal(`<h3 id="mTitle">${ic('alert',18)}Không xuất được hàng quá hạn</h3><div class="sub" style="font-size:13.5px">${sku(i)} <b>${esc(i.name)}</b>: có <b class="mono">${ex} ${esc(i.unit)}</b> đã quá hạn, chỉ còn <b class="mono">${usable} ${esc(i.unit)}</b> dùng được.<br>Hàng quá hạn không được dùng pha chế — hãy báo hủy phần này.</div>
+  <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Đóng</button><button class="btn btn-danger" id="mOk" type="button">Báo hủy ${ex} ${esc(shortUnit(i.unit))} quá hạn</button></div>`);
+  on('#mCancel',closeModal);on('#mOk',()=>openWasteModal(i.id,{reason:0,qty:ex}));
 }
 
 /* ---- Modal ---- */
@@ -1005,7 +1039,7 @@ function renderWizard(){
   on('#next3',()=>{const id=$('#fItem').value,q=Math.max(1,Math.round(+$('#fQty').value||0)),i=item(id);
     commit(`Nhập ${q} ${i.unit} ${i.sku} — thiết lập hoàn tất`,()=>{applyQty(i,i.qty+q,'in','Nhập thử lô đầu tiên (hướng dẫn)');w.done=true;});});
   on('#back',()=>{w.step--;save();renderWizard();});
-  on('#startCsv',()=>openImportModal());
+  on('#startCsv',()=>openImportModal('replace'));
   on('#startEmpty',()=>ask('Bắt đầu với kho trống?','Xóa 10 nguyên liệu mẫu để bạn tự thêm nguyên liệu của quán ở Chế độ 2 (hoặc nhập từ Excel). Hoàn tác được ngay sau đó.','Bắt đầu kho trống',()=>commit('Đã tạo kho trống — thêm nguyên liệu ở Chế độ 2',()=>{S.items=[];S.cart={};S.touched=[];S.shiftBase={};S.wiz.done=true;})));
   on('#goMgr',()=>{setMode(2);window.scrollTo({top:0});});
   on('#redo',()=>{S.wiz={step:1,packs:w.packs,level:w.level,done:false};save();renderWizard();});
@@ -1017,14 +1051,15 @@ function renderShelf(){
 }
 
 /* ================== MODE 2 ================== */
-let fCat='all', fSt='all', fQ='';
+let fCat='all', fSt='all', fQ='', tSort={key:null,dir:1};
 const scrollTo_=sel=>{const e=$(sel);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});};
 function renderBanner(){
-  const list=activeItems(),low=needItems(),out=low.filter(i=>status(i)==='out'),exp=list.filter(isExp),po=pendingOrders();
+  const list=activeItems(),low=needItems(),out=low.filter(i=>status(i)==='out'),exp=list.filter(isExp),po=pendingOrders(),xp=list.filter(isExpired);
   const b=$('#actionBanner');
-  if(!low.length&&!exp.length&&!po.length){b.className='banner calm';b.innerHTML=`${ic('check')} Không có việc gấp hôm nay — kho đủ dùng, không có lô cận date, không có đơn chờ nhận.`;return;}
+  if(!low.length&&!exp.length&&!po.length&&!xp.length){b.className='banner calm';b.innerHTML=`${ic('check')} Không có việc gấp hôm nay — kho đủ dùng, không có lô cận date, không có đơn chờ nhận.`;return;}
   b.className='banner';
-  b.innerHTML=`<span class="bl">Cần xử lý hôm nay</span>${low.length?`<button type="button" class="warn" id="bnLow">${ic('alert',14)}${low.length} nguyên liệu cần đặt hàng (${out.length} hết sạch)</button>`:''}${exp.length?`<button type="button" class="exp" id="bnExp">${ic('hourglass',14)}${exp.length} lô hàng cận date (&lt; 4 ngày)</button>`:''}${po.length?`<button type="button" class="pend" id="bnPo">${ic('truck',14)}${po.length} đơn đặt hàng đang chờ nhận</button>`:''}`;
+  b.innerHTML=`<span class="bl">Cần xử lý hôm nay</span>${xp.length?`<button type="button" class="exp" id="bnXp" style="font-weight:600">${ic('alert',14)}${xp.length} món có hàng đã quá hạn — cần hủy</button>`:''}${low.length?`<button type="button" class="warn" id="bnLow">${ic('alert',14)}${low.length} nguyên liệu cần đặt hàng (${out.length} hết sạch)</button>`:''}${exp.length?`<button type="button" class="exp" id="bnExp">${ic('hourglass',14)}${exp.length} lô hàng cận date (&lt; 4 ngày)</button>`:''}${po.length?`<button type="button" class="pend" id="bnPo">${ic('truck',14)}${po.length} đơn đặt hàng đang chờ nhận</button>`:''}`;
+  on('#bnXp',()=>{const i=xp[0];openWasteModal(i.id,{reason:0,qty:expiredQty(i)});});
   on('#bnLow',()=>{fSt='alert';renderKPIs();renderTable();scrollTo_('#reorderBox');});
   on('#bnExp',()=>{fSt='exp';renderKPIs();renderTable();scrollTo_('#invTable');});
   on('#bnPo',()=>{const p=pendingOrders();if(p.length===1)openReceiveModal(p[0].id);else scrollTo_('#poList');});
@@ -1046,7 +1081,7 @@ function renderKPIs(){
   $('#kpis').innerHTML=`
    <div class="kpi"><div class="h">Tổng giá trị kho${ic('coins')}</div><div class="v"><span style="white-space:nowrap">${fmt(total)}</span></div><div class="f">${list.length} mã đang hoạt động</div><div class="base">Đơn đặt hàng chờ giao: <span class="mono">${fmt(poVal)}</span></div></div>
    <button class="kpi warn ${fSt==='alert'?'active-filter':''}" id="kLow" type="button" aria-pressed="${fSt==='alert'}"><div class="h">Sắp hết / Hết hàng${ic('alert')}</div><div class="v">${low.length} <small>mã · ${out.length} hết sạch</small></div><div class="f">${needItems().length} cần đặt · ${low.length-needItems().length} đã có đơn chờ giao</div><div class="go"><span>${fSt==='alert'?'Đang lọc — nhấn để bỏ lọc':'Lọc &amp; đặt hàng ngay'}</span><span>→</span></div></button>
-   <button class="kpi exp ${fSt==='exp'?'active-filter':''}" id="kExp" type="button" aria-pressed="${fSt==='exp'}"><div class="h">Nguyên liệu cận date${ic('hourglass')}</div><div class="v">${exp.length} <small>lô</small></div><div class="f">${exp.length?exp.map(i=>esc(i.sku)).join(' · ')+' (≤ 4 ngày)':'Không có lô nào ≤ 4 ngày'}</div><div class="go"><span>${fSt==='exp'?'Đang lọc — nhấn để bỏ lọc':'Lọc lô cận hạn'}</span><span>→</span></div></button>
+   <button class="kpi exp ${fSt==='exp'?'active-filter':''}" id="kExp" type="button" aria-pressed="${fSt==='exp'}"><div class="h">Nguyên liệu cận date${ic('hourglass')}</div><div class="v">${exp.length} <small>lô</small></div><div class="f">${exp.length?exp.map(i=>esc(i.sku)).join(' · ')+' (≤ 4 ngày)':'Không có lô nào ≤ 4 ngày'}</div>${list.filter(isExpired).length?`<div class="f" style="font-weight:600">${list.filter(isExpired).length} món có hàng đã quá hạn</div>`:''}<div class="go"><span>${fSt==='exp'?'Đang lọc — nhấn để bỏ lọc':'Lọc lô cận hạn'}</span><span>→</span></div></button>
    <button class="kpi loss ${wl.length&&rate>=3?'bad':''}" id="kLoss" type="button"><div class="h">Tỷ lệ hao hụt tuần${ic('scale')}</div>${lossHtml}<div class="go"><span>Xem nhật ký hao hụt</span><span>→</span></div></button>`;
   on('#kLow',()=>{fSt=fSt==='alert'?'all':'alert';renderKPIs();renderTable();if(fSt!=='all')scrollTo_('#invTable');});
   on('#kExp',()=>{fSt=fSt==='exp'?'all':'exp';renderKPIs();renderTable();if(fSt!=='all')scrollTo_('#invTable');});
@@ -1066,11 +1101,14 @@ function renderTable(){
   const q=fQ.trim().toLowerCase();
   const base=fSt==='hidden'?S.items.filter(i=>i.active===false):activeItems();
   const rows=base.filter(i=>(fCat==='all'||i.cat===fCat)
-    &&(fSt==='all'||fSt==='hidden'||(fSt==='alert'&&status(i)!=='ok')||(fSt==='exp'&&isExp(i))||(fSt==='ok'&&status(i)==='ok'))
+    &&(fSt==='all'||fSt==='hidden'||(fSt==='alert'&&status(i)!=='ok')||(fSt==='exp'&&(isExp(i)||isExpired(i)))||(fSt==='ok'&&status(i)==='ok'))
     &&(!q||searchText(i).includes(q)));
+  const sev=i=>isExpired(i)?-1:status(i)==='out'?0:status(i)==='low'?1:isExp(i)?2:3;
+  if(tSort.key)rows.sort((a,b)=>{if(tSort.key==='name')return a.name.localeCompare(b.name,'vi')*tSort.dir;const x=tSort.key==='days'?(daysLeft(a)??1e9):sev(a),y=tSort.key==='days'?(daysLeft(b)??1e9):sev(b);return (x-y)*tSort.dir;});
+  document.querySelectorAll('#invTable th[data-sort]').forEach(th=>th.setAttribute('aria-sort',tSort.key===th.dataset.sort?(tSort.dir>0?'ascending':'descending'):'none'));
   const color={ok:'var(--green)',low:'var(--amber)',out:'var(--red)'};
   $('#tbody').innerHTML=rows.length?rows.map(i=>{const p=Math.min(100,Math.round(i.qty/(i.min*1.6)*100)),hid=i.active===false,pq=pendingOrderQty(i.id),dl=daysLeft(i);return `<tr>
-    <td class="c-name"><div class="namecell">${sku(i)}<div style="min-width:0"><button class="namebtn" type="button" data-edit="${i.id}">${esc(i.name)}</button>${i.fast?'<span class="tagx fast" title="Có trong danh sách kiểm kho nhanh cuối ca">Kiểm ca</span>':''}${isExp(i)?`<span class="tagx exp">${expLabel(i.exp)}</span>`:''}${pq?`<span class="tagx pend">Chờ giao +${pq}</span>`:''}<div class="meta">${CATS[i.cat].label} · ${esc(i.sup)}${i.packRate>1?` · 1 ${esc(i.packUnit)} = ${i.packRate} ${esc(i.unit)}`:''}</div></div></div></td>
+    <td class="c-name"><div class="namecell">${sku(i)}<div style="min-width:0"><button class="namebtn" type="button" data-edit="${i.id}">${esc(i.name)}</button>${i.fast?'<span class="tagx fast" title="Có trong danh sách kiểm kho nhanh cuối ca">Kiểm ca</span>':''}${isExpired(i)?`<span class="tagx exp" style="font-weight:600">Quá hạn ${expiredQty(i)} ${esc(shortUnit(i.unit))}</span>`:''}${isExp(i)?`<span class="tagx exp">${expLabel(nearExp(i))}</span>`:''}${pq?`<span class="tagx pend">Chờ giao +${pq}</span>`:''}<div class="meta">${CATS[i.cat].label} · ${esc(i.sup)}${i.packRate>1?` · 1 ${esc(i.packUnit)} = ${i.packRate} ${esc(i.unit)}`:''}</div></div></div></td>
     <td class="c-qty"><div class="qty"><b>${i.qty}</b> <small>/ ${i.min} ${esc(i.unit)}</small></div><div class="bar"><i style="width:${p}%;background:${color[status(i)]}"></i></div><div class="meta mono" style="margin-top:4px">${dl!=null?`~${dl.toFixed(1)} ngày · `:''}${fmt(i.price)}/${esc(shortUnit(i.unit))}</div></td>
     <td class="c-st">${hid?'<span class="pill off">Đã ẩn</span>':pill(i)}</td>
     <td class="c-act"><div class="acts-row">${hid?`<button class="mini" type="button" data-show="${i.id}">${ic('eye',14)}Bật lại</button>`:`<button class="mini" type="button" data-qadj="-1" data-id="${i.id}" aria-label="Giảm 1 ${esc(i.name)}">−1</button><button class="mini" type="button" data-qadj="1" data-id="${i.id}" aria-label="Tăng 1 ${esc(i.name)}">+1</button>`}<button class="mini" type="button" data-edit="${i.id}" aria-label="Chi tiết ${esc(i.name)}">${ic('edit',14)}Chi tiết</button></div></td></tr>`}).join('')
@@ -1082,6 +1120,8 @@ function renderTable(){
   on('#resetF',resetFilters);
 }
 $('#q').addEventListener('input',e=>{fQ=e.target.value;renderTable();});
+document.querySelectorAll('#invTable th[data-sort] .thb').forEach(b=>b.onclick=()=>{const k=b.parentElement.dataset.sort;tSort=tSort.key===k?{key:k,dir:-tSort.dir}:{key:k,dir:1};const sel=$('#tSortSel');if(sel)sel.value='';renderTable();});
+$('#tSortSel').onchange=e=>{const [k,d]=e.target.value.split(':');tSort=k?{key:k,dir:+d}:{key:null,dir:1};renderTable();};
 $('#qClear').onclick=()=>{fQ='';$('#q').value='';renderTable();$('#q').focus();};
 
 /* ---- Đề xuất bổ sung + Đơn PO chờ giao ---- */
@@ -1112,7 +1152,8 @@ function orderModal(){
   const pre=i=>cartIds.length?cartIds.includes(i.id):(status(i)!=='ok'&&suggest(i)>0);
   const groups={};list.forEach(i=>{(groups[i.sup]=groups[i.sup]||[]).push(i);});
   openModal(`<h3 id="mTitle">${ic('truck',18)}Lập đơn đặt hàng</h3><div class="sub">Đã tích sẵn ${cartIds.length?'các món bạn chọn':'các món dưới định mức'}. Có thể tích thêm món khác để đặt chủ động. Đề xuất = Định mức × 1.6 − Tồn − Đang chờ giao.</div>
-  ${Object.entries(groups).map(([sup,its])=>`<div class="grp">${esc(sup)}</div>${its.map(i=>{const v=S.cart[i.id]??suggest(i);return `<label class="order-line ${pre(i)?'':'off'}" data-row="${i.id}"><input type="checkbox" data-ock="${i.id}" ${pre(i)?'checked':''} aria-label="Chọn đặt ${esc(i.name)}"><span style="min-width:0">${sku(i)} ${esc(shortName(i.name))}<br><small style="color:var(--muted)" class="mono">Tồn ${i.qty} · min ${i.min}${pendingOrderQty(i.id)?` · chờ ${pendingOrderQty(i.id)}`:''}${status(i)==='ok'&&suggest(i)>0?' · nên đặt thêm':''} · ${fmt(i.price)}/${esc(shortUnit(i.unit))}</small></span><span class="qcol"><span><input type="number" min="0" step="1" data-ol="${i.id}" value="${v}" aria-label="Số lượng đặt ${esc(i.name)}"> <small>${esc(shortUnit(i.unit))}</small></span>${i.packRate>1?`<button type="button" class="pk" data-pk="${i.id}">+1 ${esc(i.packUnit)} (${i.packRate})</button>`:''}</span></label>`;}).join('')}`).join('')}
+  <div class="row" style="flex-wrap:wrap;margin-top:10px"><div class="search" style="margin:0;flex:1 1 220px">${ic('search')}<input id="olQ" type="search" placeholder="Tìm món, mã hàng, nhà cung cấp…" aria-label="Tìm trong đơn"></div><label class="check" style="margin:0"><input type="checkbox" id="olOnly" ${list.length>15?'checked':''}> Chỉ hiện món cần đặt / đã chọn</label></div>
+  ${Object.entries(groups).map(([sup,its])=>`<div class="og"><div class="grp">${esc(sup)}</div>${its.map(i=>{const v=S.cart[i.id]??suggest(i);return `<label class="order-line ${pre(i)?'':'off'}" data-row="${i.id}" data-name="${esc(searchText(i))}"><input type="checkbox" data-ock="${i.id}" ${pre(i)?'checked':''} aria-label="Chọn đặt ${esc(i.name)}"><span style="min-width:0">${sku(i)} ${esc(shortName(i.name))}<br><small style="color:var(--muted)" class="mono">Tồn ${i.qty} · min ${i.min}${pendingOrderQty(i.id)?` · chờ ${pendingOrderQty(i.id)}`:''}${status(i)==='ok'&&suggest(i)>0?' · nên đặt thêm':''} · ${fmt(i.price)}/${esc(shortUnit(i.unit))}</small></span><span class="qcol"><span><input type="number" min="0" step="1" data-ol="${i.id}" value="${v}" aria-label="Số lượng đặt ${esc(i.name)}"> <small>${esc(shortUnit(i.unit))}</small></span>${i.packRate>1?`<button type="button" class="pk" data-pk="${i.id}">+1 ${esc(i.packUnit)} (${i.packRate})</button>`:''}</span></label>`;}).join('')}</div>`).join('')}
   <div class="row between" style="margin-top:14px"><b>Tạm tính (<span id="olN">0</span> món)</b><b class="mono" id="olTotal"></b></div>
   <div class="acts"><button class="btn btn-primary" id="mPO" type="button">${ic('copy')}Tạo đơn đặt hàng &amp; copy gửi Zalo nhà cung cấp</button><button class="btn btn-dark" id="mRecv" type="button">${ic('box')}Nhập kho trực tiếp (đã nhận hàng)</button></div>
   <div class="acts" style="margin-top:8px"><button class="btn btn-soft" id="mCancel" type="button">Hủy</button></div>`,true);
@@ -1124,6 +1165,8 @@ function orderModal(){
   document.querySelectorAll('[data-ol]').forEach(inp=>inp.addEventListener('input',()=>{if(+inp.value>0)document.querySelector(`[data-ock="${inp.dataset.ol}"]`).checked=true;calc();}));
   document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=e=>{e.preventDefault();const i=item(b.dataset.pk),inp=qIn(i.id);inp.value=(+inp.value||0)+i.packRate;document.querySelector(`[data-ock="${i.id}"]`).checked=true;calc();});
   calc();
+  const filt=()=>{const q=nrm($('#olQ').value),only=$('#olOnly').checked;document.querySelectorAll('.og').forEach(g=>{let n=0;g.querySelectorAll('[data-row]').forEach(r=>{const m=(!q||nrm(r.dataset.name).includes(q))&&(!only||r.querySelector('[data-ock]').checked);r.hidden=!m;if(m)n++;});g.hidden=!n;});};
+  $('#olQ').oninput=filt;$('#olOnly').onchange=filt;filt();
   on('#mCancel',closeModal);
   on('#mPO',()=>{const L=lines();if(!L.length)return;
     const o={id:'PO-'+String(Date.now()).slice(-4),time:stamp(),ts:new Date().toISOString(),status:'pending',lines:L.map(({i,q})=>({itemId:i.id,name:i.name,unit:i.unit,sup:i.sup,qty:q,price:i.price}))};
@@ -1145,21 +1188,36 @@ $('#approveBtn').onclick=orderModal;
 function openReceiveModal(orderId){
   const o=S.orders.find(x=>x.id===orderId);if(!o||o.status!=='pending'){toast('Đơn này không còn ở trạng thái chờ giao');return;}
   const defExp=l=>{const i=item(l.itemId);return i&&i.shelfLife?addDaysISO(i.shelfLife):'';};
-  openModal(`<h3 id="mTitle">${ic('box',18)}Kiểm nhận hàng <span class="mono">${esc(o.id)}</span></h3><div class="sub">Tạo lúc ${esc(o.time)}. Nhập đúng số lượng và đơn giá trên phiếu giao. Dòng có SL thực nhận = 0 sẽ không nhập kho.</div>
+  let priceAck=false;
+  openModal(`<h3 id="mTitle">${ic('box',18)}Kiểm nhận hàng <span class="mono">${esc(o.id)}</span></h3><div class="sub">Tạo lúc ${esc(o.time)}${o.note?' · '+esc(o.note):''}. Nhập đúng số lượng và đơn giá trên phiếu giao — chọn đơn giá tính theo đơn vị lẻ hay theo thùng/bao. Dòng có SL thực nhận = 0 sẽ không nhập kho.</div>
   <table class="rtable"><thead><tr><th>Nguyên liệu &amp; nhà cung cấp</th><th>SL đặt</th><th>SL thực nhận</th><th>Đơn giá nhập</th><th>Ngày hết hạn lô mới</th></tr></thead><tbody>
-  ${o.lines.map((l,k)=>{const i=item(l.itemId);return `<tr><td class="rn">${i?sku(i):'<span class="sku">—</span>'} <b>${esc(l.name)}</b><div class="sub" style="margin:0">${esc(l.sup||'—')}${i?'':' · (nguyên liệu đã bị xóa — bỏ qua)'}</div></td><td data-l="SL đặt" class="mono">${l.qty} ${esc(shortUnit(l.unit))}</td><td data-l="Thực nhận"><input type="number" min="0" step="any" data-aq="${k}" value="${i?l.qty:0}" ${i?'':'disabled'} aria-label="Số lượng thực nhận ${esc(l.name)}"></td><td data-l="Đơn giá"><input type="number" min="0" step="1000" data-ap="${k}" value="${l.price}" ${i?'':'disabled'} aria-label="Đơn giá nhập ${esc(l.name)}"></td><td data-l="Hết hạn"><input type="date" data-ae="${k}" value="${defExp(l)}" ${i?'':'disabled'} aria-label="Hạn sử dụng lô mới ${esc(l.name)}"></td></tr>`;}).join('')}</tbody></table>
+  ${o.lines.map((l,k)=>{const i=item(l.itemId);return `<tr><td class="rn">${i?sku(i):'<span class="sku">—</span>'} <b>${esc(l.name)}</b><div class="sub" style="margin:0">${esc(l.sup||'—')}${i?'':' · (nguyên liệu đã bị xóa — bỏ qua)'}</div></td><td data-l="SL đặt" class="mono">${l.qty} ${esc(shortUnit(l.unit))}</td><td data-l="Thực nhận"><input type="number" min="0" step="any" data-aq="${k}" value="${i?l.qty:0}" ${i?'':'disabled'} aria-label="Số lượng thực nhận ${esc(l.name)}"></td><td data-l="Đơn giá"><input type="number" min="0" step="any" data-ap="${k}" value="${l.price}" ${i?'':'disabled'} aria-label="Đơn giá nhập ${esc(l.name)}"> ${i&&i.packRate>1?`<select data-apu="${k}" aria-label="Đơn giá tính theo"><option value="1">/ ${esc(shortUnit(i.unit))}</option><option value="${i.packRate}">/ ${esc(i.packUnit)} (${i.packRate})</option></select>`:`<small>/ ${esc(shortUnit(l.unit))}</small>`}<div class="aph" data-aph="${k}"></div></td><td data-l="Hết hạn"><input type="date" data-ae="${k}" value="${defExp(l)}" ${i?'':'disabled'} aria-label="Hạn sử dụng lô mới ${esc(l.name)}"></td></tr>`;}).join('')}</tbody></table>
   <div class="field"><label for="rcvNote">Ghi chú nhận hàng</label><input id="rcvNote" placeholder="VD: Giao đủ, hàng đạt chuẩn / Thiếu 2 hộp sữa, NCC hẹn giao bù"></div>
   <div class="wprev" id="rcvSum"></div>
   <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Để sau</button><button class="btn btn-primary" id="mOk" type="button">${ic('check')}Xác nhận nhập kho theo thực nhận</button></div>`,true);
-  const read=()=>o.lines.map((l,k)=>({l,i:item(l.itemId),aq:Math.max(0,+$(`[data-aq="${k}"]`).value||0),ap:Math.max(0,+$(`[data-ap="${k}"]`).value||0),ae:$(`[data-ae="${k}"]`).value}));
-  const sum=()=>{const R=read().filter(r=>r.i);const short=R.filter(r=>r.aq<r.l.qty);$('#rcvSum').innerHTML=`Thực nhận <b class="mono">${R.filter(r=>r.aq>0).length}/${R.length}</b> dòng · Giá trị nhập <b class="mono">${fmt(R.reduce((t,r)=>t+r.aq*r.ap,0))}</b>${short.length?`<br><span style="color:var(--red)">Thiếu so với đơn: ${short.map(r=>`${esc(r.i.sku)} (${r.aq}/${r.l.qty})`).join(', ')}</span>`:''}`;};
-  document.querySelectorAll('[data-aq],[data-ap]').forEach(x=>x.addEventListener('input',sum));sum();
+  const fac=k=>{const s=$(`[data-apu="${k}"]`);return s?+s.value||1:1;};
+  const read=()=>o.lines.map((l,k)=>({l,i:item(l.itemId),aq:Math.max(0,+$(`[data-aq="${k}"]`).value||0),ap:round2(Math.max(0,+$(`[data-ap="${k}"]`).value||0)/fac(k)),k,ae:$(`[data-ae="${k}"]`).value}));
+  const bigDiff=R=>R.filter(r=>r.i&&r.aq>0&&r.i.price>0&&Math.abs(r.ap-r.i.price)/r.i.price>0.5);
+  const sum=()=>{const all=read(),R=all.filter(r=>r.i),short=R.filter(r=>r.aq<r.l.qty),bd=bigDiff(R);
+    all.forEach(r=>{const h=$(`[data-aph="${r.k}"]`);if(h)h.textContent=r.i&&fac(r.k)>1?`= ${fmt(r.ap)} / ${shortUnit(r.i.unit)}`:'';});
+    $('#rcvSum').innerHTML=`Thực nhận <b class="mono">${R.filter(r=>r.aq>0).length}/${R.length}</b> dòng · Giá trị nhập <b class="mono">${fmt(R.reduce((t,r)=>t+r.aq*r.ap,0))}</b>${short.length?`<br><span style="color:var(--red)">Thiếu so với đơn: ${short.map(r=>`${esc(r.i.sku)} (${r.aq}/${r.l.qty})`).join(', ')}</span>`:''}${bd.length?`<br><span style="color:var(--red);font-weight:600">Giá chênh hơn 50% so với giá cũ: ${bd.map(r=>`${esc(r.i.sku)} ${fmt(r.ap)}/${esc(shortUnit(r.i.unit))} (cũ ${fmt(r.i.price)})`).join(', ')} — có nhập nhầm giá thùng thành giá lẻ không?</span>`:''}`;};
+  document.querySelectorAll('[data-aq],[data-ap],[data-apu]').forEach(x=>{x.addEventListener('input',()=>{priceAck=false;$('#mOk').innerHTML=`${ic('check')}Xác nhận nhập kho theo thực nhận`;sum();});x.addEventListener('change',sum);});sum();
   on('#mCancel',closeModal);
-  on('#mOk',()=>{const R=read(),note=$('#rcvNote').value.trim();closeModal();
-    commit(`Đã nhập kho theo đơn ${o.id}`,()=>{
+  const doRcv=(R,note,keep)=>{const short=R.filter(r=>r.i&&r.aq<r.l.qty);
+    commit(`Đã nhập kho theo đơn ${o.id}${keep&&short.length?` · giữ ${short.length} dòng chờ giao bù`:''}`,()=>{
       R.forEach(r=>{if(!r.i||!(r.aq>0))return;r.i.price=r.ap;applyQty(r.i,r.i.qty+r.aq,'in',`Nhận đơn ${o.id}: Thực nhận ${r.aq}/${r.l.qty} ${r.i.unit}`,r.ae?{expDate:r.ae,lot:'Lô '+o.id}:{});});
       o.status='received';o.receivedAt=stamp();o.note=note;o.received=R.map(r=>({itemId:r.l.itemId,qty:r.aq,price:r.ap,expDate:r.ae||null}));
-    });});
+      if(keep&&short.length){let bid=o.id+'-B',n=2;while(S.orders.some(x=>x.id===bid))bid=o.id+'-B'+n++;
+        S.orders.unshift({id:bid,time:stamp(),ts:new Date().toISOString(),status:'pending',note:'Giao bù cho '+o.id,lines:short.map(r=>({...r.l,qty:round2(r.l.qty-r.aq)}))});}
+    });};
+  on('#mOk',()=>{const R=read(),note=$('#rcvNote').value.trim();
+    if(bigDiff(R).length&&!priceAck){priceAck=true;$('#mOk').textContent='Giá đúng — xác nhận nhập kho';$('#rcvSum').scrollIntoView({block:'nearest'});return;}
+    const short=R.filter(r=>r.i&&r.aq<r.l.qty);
+    if(!short.length){closeModal();doRcv(R,note,false);return;}
+    openModal(`<h3 id="mTitle">Nhận thiếu ${short.length} dòng</h3><div class="sub" style="font-size:13.5px">${short.map(r=>`${sku(r.i)} ${esc(r.l.name)}: nhận ${r.aq}/${r.l.qty} ${esc(shortUnit(r.l.unit))}`).join('<br>')}<br><br>Giữ phần còn thiếu ở trạng thái <b>chờ giao bù</b> để không quên theo dõi?</div>
+    <div class="acts"><button class="btn btn-soft" id="mNo" type="button">Không, đóng đơn</button><button class="btn btn-primary" id="mYes" type="button">Giữ chờ giao bù</button></div>`);
+    on('#mNo',()=>{closeModal();doRcv(R,note,false);});on('#mYes',()=>{closeModal();doRcv(R,note,true);});
+  });
 }
 
 /* ---- Hồ sơ nguyên liệu: Thêm / Sửa (3 tab) ---- */
@@ -1180,7 +1238,7 @@ function openItemModal(editId=null){
       <div class="frow"><div class="field" id="fwQty"><label for="nQty">Tồn hiện tại</label><input id="nQty" type="number" min="0" step="any" value="${v.qty}" aria-describedby="eQty"><span class="msg" id="eQty"></span></div>
       <div class="field" id="fwMin"><label for="nMin">Định mức tối thiểu *</label><input id="nMin" type="number" min="1" step="any" value="${v.min}" aria-describedby="eMin"><span class="msg" id="eMin"></span></div></div>
       <div class="frow"><div class="field"><label for="nUnit">Đơn vị gốc</label><input id="nUnit" value="${esc(v.unit)}"></div>
-      <div class="field"><label for="nPrice">Đơn giá vốn (đ / đơn vị gốc)</label><input id="nPrice" type="number" min="0" step="1000" value="${v.price}"></div></div>
+      <div class="field"><label for="nPrice">Đơn giá vốn (đ / 1 ${esc(shortUnit(v.unit))})</label><input id="nPrice" type="number" min="0" step="1000" value="${v.price}"></div></div>
       <div class="fbox"><h4 class="eyebrow">Quy đổi đơn vị &amp; vận hành</h4>
         <div class="frow"><div class="field"><label for="nPackUnit">Đơn vị nhập chẵn</label><input id="nPackUnit" value="${esc(v.packUnit)}" placeholder="VD: Thùng, Bao"></div>
         <div class="field" id="fwRate"><label for="nPackRate">Hệ số quy đổi (1 đơn vị chẵn = ? đơn vị gốc)</label><input id="nPackRate" type="number" min="1" step="any" value="${v.packRate}" aria-describedby="eRate"><span class="msg" id="eRate"></span></div></div>
@@ -1271,9 +1329,9 @@ $('#addBtn').onclick=()=>openItemModal(null);
 /* ---- Báo hủy / Hao hụt & Báo hết ---- */
 const REASONS=['Quá hạn sử dụng','Đổ vỡ / Hư hỏng bảo quản','Pha sai công thức / Test đồ uống','Kiểm đếm thực tế đã hết'];
 const pickBtn=(i,attr,sel)=>`<button type="button" ${attr}="${i.id}" aria-pressed="${i.id===sel}" data-name="${esc(searchText(i))}">${sku(i)}<span class="pn">${esc(i.name)}</span><span class="pq">${i.qty} ${esc(shortUnit(i.unit))}</span></button>`;
-function openWasteModal(defId){
+function openWasteModal(defId,preset={}){
   const list=activeItems();if(!list.length){toast('Chưa có nguyên liệu nào đang theo dõi');return;}
-  let sel=defId&&item(defId)?defId:null, mode='part', reason=null;
+  let sel=defId&&item(defId)?defId:null, mode='part', reason=preset.reason??null;
   openModal(`<h3 id="mTitle">${ic('alert',18)}Báo hết / Ghi nhận hủy &amp; hao hụt</h3><div class="sub">Chọn nguyên liệu, kiểu ghi nhận và lý do. Kho tự trừ lô có hạn gần nhất trước, ghi vào nhật ký kho và có thể hoàn tác.</div>
   <div class="search" style="margin:12px 0 0">${ic('search')}<input id="wsQ" type="search" placeholder="Tìm theo tên hoặc mã SKU…" aria-label="Tìm nguyên liệu" ${sel?'':'autofocus'}></div>
   <div class="pick wpick" id="wsList">${list.map(i=>pickBtn(i,'data-ws',sel)).join('')}</div>
@@ -1284,7 +1342,7 @@ function openWasteModal(defId){
     if(!i){$('#wsBody').innerHTML=`<div class="wprev">Chọn một nguyên liệu ở danh sách trên.</div><div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Đóng</button></div>`;on('#mCancel',closeModal);return;}
     $('#wsBody').innerHTML=`<div class="wprev">${sku(i)} <b>${esc(i.name)}</b><br>Đang có <b class="mono">${i.qty} ${esc(i.unit)}</b> · Giá vốn <span class="mono">${fmt(i.price)}/${esc(shortUnit(i.unit))}</span></div>
     <div class="seg" role="group" aria-label="Kiểu ghi nhận"><button type="button" class="out" data-wm="part" aria-pressed="${mode==='part'}">${ic('trash',14)}Hủy / hao hụt một phần</button><button type="button" class="out" data-wm="zero" aria-pressed="${mode==='zero'}">${ic('alert',14)}Báo hết sạch (về 0)</button></div>
-    ${mode==='part'?`<div class="field"><label for="wsQty">Số lượng hỏng / đổ bỏ (${esc(i.unit)})</label><input id="wsQty" type="number" min="0.1" step="any" inputmode="decimal" value="${i.qty>0&&i.qty<1?i.qty:1}"></div>`:''}
+    ${mode==='part'?`<div class="field"><label for="wsQty">Số lượng hỏng / đổ bỏ (${esc(i.unit)})</label><input id="wsQty" type="number" min="0.1" step="any" inputmode="decimal" value="${preset.qty&&i.id===defId?preset.qty:(i.qty>0&&i.qty<1?i.qty:1)}"></div>`:''}
     <div class="field"><span class="flabel">Lý do hao hụt</span></div>
     <div class="rchips" role="group" aria-label="Lý do hao hụt">${REASONS.map((l,k)=>`<button type="button" data-rs="${k}" aria-pressed="${reason===k}">${l}</button>`).join('')}</div>
     <div class="wprev" id="wsPrev" aria-live="polite"></div>
@@ -1328,7 +1386,7 @@ function renderLogs(){
 const LOG_F=[['all','Tất cả'],['in','Nhập kho'],['out','Xuất pha chế'],['waste','Hủy / Hao hụt'],['check','Kiểm kê / Điều chỉnh']];
 function openLogModal(filter='all'){
   let f=filter,q='';
-  openModal(`<h3 id="mTitle">${ic('clock',18)}Nhật ký biến động kho</h3><div class="sub">${S.logs.length} bản ghi gần nhất (tối đa 250), lưu trên thiết bị này. Bộ lọc "Hủy / Hao hụt" gồm cả kiểm kê lệch âm.</div>
+  openModal(`<h3 id="mTitle">${ic('clock',18)}Nhật ký biến động kho</h3><div class="sub">${S.logs.length} bản ghi gần nhất (tối đa 250), lưu trên thiết bị này. Bộ lọc "Hủy / Hao hụt" gồm cả kiểm kê lệch âm.</div>${lastUndo?`<div class="acts" style="margin-top:8px"><button class="btn btn-soft" id="lgUndo" type="button">↩ Hoàn tác thao tác gần nhất: ${esc(lastUndo.label)}</button></div>`:''}
   <div class="chips" id="lgF" style="margin-top:12px"></div>
   <div class="search" style="margin:8px 0 0">${ic('search')}<input id="lgQ" type="search" placeholder="Tìm theo tên hoặc mã SKU…" aria-label="Tìm trong nhật ký"></div>
   <div class="sumrow" id="lgSum"></div><ul class="loglist" id="lgList"></ul>
@@ -1342,6 +1400,7 @@ function openLogModal(filter='all'){
   };
   $('#lgQ').oninput=e=>{q=e.target.value.trim().toLowerCase();draw();};
   on('#mCancel',closeModal);draw();
+  on('#lgUndo',()=>{const lu=lastUndo;if(!lu)return;ask('Hoàn tác thao tác gần nhất?',`${esc(lu.label)}<br><br>Các lựa chọn chưa lưu sau thao tác này (VD món đã chọn vào giỏ đặt hàng) cũng trở về như trước.`,'Hoàn tác',()=>{lastUndo=null;undoFn=null;lu.fn();});});
 }
 $('#logBtn').onclick=()=>openLogModal('all');
 
@@ -1441,13 +1500,13 @@ function parseImport(text){
   return {items,errs};
 }
 const uniqSku=b=>{let x=b,n=2;while(S.items.some(i=>i.sku===x))x=b+'-'+n++;return x;};
-function openImportModal(){
-  let parsed=null,mode='replace';
+function openImportModal(defMode='merge'){
+  let parsed=null,mode=defMode;
   openModal(`<h3 id="mTitle">${ic('plus',18)}Nhập danh sách nguyên liệu từ Excel</h3><div class="sub">Điền danh sách vào file mẫu bằng Excel hoặc Google Sheets, lưu dạng <b>CSV</b> rồi chọn file — hoặc copy cả bảng và dán vào ô bên dưới. Chỉ cột <b>Tên nguyên liệu</b> là bắt buộc.</div>
   <div class="acts"><button class="btn btn-soft" id="imTpl" type="button">${ic('download',14)}Tải file mẫu (.CSV)</button></div>
   <div class="field"><label for="imFile">Chọn file CSV</label><input id="imFile" type="file" accept=".csv,text/csv,.txt"></div>
   <div class="field"><label for="imPaste">…hoặc dán bảng (kèm dòng tiêu đề) từ Excel / Google Sheets</label><textarea class="copy" id="imPaste" style="min-height:90px"></textarea></div>
-  <div class="seg" role="group" aria-label="Cách nhập"><button type="button" class="in" data-im="replace" aria-pressed="true">Thay toàn bộ kho hiện tại</button><button type="button" class="in" data-im="merge" aria-pressed="false">Thêm / cập nhật theo mã hàng</button></div>
+  <div class="seg" role="group" aria-label="Cách nhập"><button type="button" class="in" data-im="merge" aria-pressed="${mode==='merge'}">Thêm / cập nhật theo mã hàng</button><button type="button" class="in" data-im="replace" aria-pressed="${mode==='replace'}">Thay toàn bộ kho hiện tại</button></div>
   <div class="wprev" id="imPrev">Chưa có dữ liệu.</div>
   <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Hủy</button><button class="btn btn-primary" id="mOk" type="button" disabled>Nhập dữ liệu</button></div>`,true);
   const run=()=>{const t=$('#imPaste').value;
@@ -1462,7 +1521,8 @@ function openImportModal(){
   document.querySelectorAll('[data-im]').forEach(b=>b.onclick=()=>{mode=b.dataset.im;document.querySelectorAll('[data-im]').forEach(x=>x.setAttribute('aria-pressed',x===b));run();});
   on('#imTpl',()=>saveFile('beanstock-mau-nhap-kho.csv',templateCsv(),'text/csv'));
   on('#mCancel',closeModal);
-  on('#mOk',()=>{if(!parsed||!parsed.items.length)return;const P=parsed.items;closeModal();
+  on('#mOk',()=>{if(!parsed||!parsed.items.length)return;const P=parsed.items;
+    const doIt=()=>{closeModal();if(mode==='replace'){try{localStorage.setItem(BKEY,JSON.stringify({at:stamp(),data:S}));}catch(e){}}
     commit(mode==='replace'?`Đã thay kho bằng ${P.length} nguyên liệu từ file`:`Đã nhập ${P.length} nguyên liệu từ file`,()=>{
       if(mode==='replace'){S.items=[];S.cart={};S.touched=[];S.shiftBase={};}
       P.forEach((r,k)=>{const {qty,expDate,...rest}=r;const ex=mode==='merge'&&r.sku?S.items.find(i=>i.sku===r.sku):null;
@@ -1470,7 +1530,9 @@ function openImportModal(){
         else{const id='n'+Date.now().toString(36)+k;const n={id,icon:CATS[r.cat].icon,kw:[r.name.toLowerCase()],active:true,minCustom:true,packUnit:'',packRate:1,dailyUsage:Math.max(0.5,+(r.min/2).toFixed(1)),altNote:'',shelfLife:null,...rest,sku:uniqSku(r.sku||autoSku(id)),qty:0,batches:[],exp:null,expDate:null};
           S.items.push(n);applyQty(n,qty,'in','Tồn ban đầu (nhập từ file Excel/CSV)',expDate?{expDate,lot:'Lô ban đầu'}:{});}});
       S.wiz.done=true;
-    });});
+    });};
+    const used=S.logs.length>0||S.items.some(i=>!SEED.some(x=>x.id===i.id));
+    if(mode==='replace'&&used)ask('Thay toàn bộ kho?',`Kho hiện có <b>${S.items.length}</b> món sẽ bị thay bằng <b>${P.length}</b> món trong file. App tự giữ một bản sao để khôi phục (Xuất / Sao lưu → Vùng nguy hiểm).`,'Thay toàn bộ kho',doIt,true);else doIt();});
 }
 
 /* ---- Nhắc dữ liệu chỉ nằm trên máy này (#3) ---- */
@@ -1491,7 +1553,7 @@ function checkHandoff(){
 }
 
 /* ================== MODE 3 ================== */
-let m3Scope='fast', m3Q='';
+let m3Scope='fast', m3Q='', m3Draft={};
 /* Đầu ca = tồn lúc bắt đầu ca (tính ngược từ nhật ký cho món thêm giữa ca) */
 function ensureShiftBase(){if(!S.shiftStart)S.shiftStart=new Date().toISOString();const st=new Date(S.shiftStart).getTime();
   activeItems().forEach(i=>{if(S.shiftBase[i.id]==null){const moved=S.logs.filter(l=>l.itemId===i.id&&new Date(l.ts).getTime()>=st).reduce((t,l)=>t+l.delta,0);S.shiftBase[i.id]=round2(i.qty-moved);}});}
@@ -1509,28 +1571,45 @@ function renderCounts(){
   $('#countTitle').textContent=m3Scope==='fast'?`Kiểm kho nhanh cuối ca · ${ids.length} món chính`:`Kiểm kê toàn bộ kho · ${ids.length} món`;
   $('#checked').textContent=`Đã kiểm: ${done}/${ids.length}`;
   const ls=S.lastShift;
-  $('#shiftBox').innerHTML=ls&&!ls.dismissed?`<div class="shift-done" role="status"><div>${ic('check',14)} <b>Biên bản giao ca ${esc(ls.time)} · ${esc(ls.date)}</b> — ${esc(ls.actor||'')}<br><span class="mono">Đã kiểm ${ls.checked}/${ls.total} · ${(ls.variances||[]).length} món lệch · ${ls.lowCount} món cần đặt</span></div><div class="row"><button class="btn" id="viewShift" type="button">${ic('receipt',14)}Xem / Copy biên bản</button><button class="btn" id="newShift" type="button">${ic('rotate',14)}Bắt đầu lượt kiểm ca mới</button></div></div>`:'';
-  on('#newShift',()=>{S.lastShift.dismissed=true;S.touched=[];save();renderCounts();toast('Đã bắt đầu lượt kiểm ca mới');});
+  $('#shiftBox').innerHTML=ls&&!ls.dismissed?`<div class="shift-done" role="status"><div>${ic('check',14)} <b>Biên bản giao ca ${esc(ls.time)} · ${esc(ls.date)}</b> — ${esc(ls.actor||'')}<br><span class="mono">Đã kiểm ${ls.checked}/${ls.total} · ${(ls.variances||[]).length} món lệch · ${ls.lowCount} món cần đặt<br>Đếm thật ${ls.counted??0} · xác nhận nhanh ${Math.max(0,ls.checked-(ls.counted??0))} · Ca mới bắt đầu lúc ${S.shiftStart?new Date(S.shiftStart).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}):'—'}</span></div><div class="row"><button class="btn" id="viewShift" type="button">${ic('receipt',14)}Xem / Copy biên bản</button><button class="btn" id="newShift" type="button">Ẩn biên bản</button></div></div>`:'';
+  on('#newShift',()=>{S.lastShift.dismissed=true;save();renderCounts();});
   on('#viewShift',()=>shiftModal(S.lastShift));
   const ss=$('#staffSel');if(ss)ss.innerHTML=S.staff.map(n=>`<option ${n===S.currentStaff?'selected':''}>${esc(n)}</option>`).join('');
   renderCountList();
 }
+/* Kiểm kho: nút ± chỉ sửa SỐ ĐANG ĐẾM (nháp), bấm "Lưu số đếm" mới ghi vào kho */
+const risky=i=>status(i)!=='ok'||isExp(i)||isExpired(i)||shiftCalc(i).moved!==0;
 function renderCountList(){
   const q=m3Q.trim().toLowerCase();
   const list=scopeList().filter(i=>!q||searchText(i).includes(q));
-  $('#counts').innerHTML=list.length?list.map(i=>{const id=i.id,su=esc(shortUnit(i.unit)),t=S.touched.includes(id),c=shiftCalc(i),diff=c.variance;
+  $('#counts').innerHTML=list.length?list.map(i=>{const id=i.id,su=esc(shortUnit(i.unit)),t=S.touched.includes(id),c=shiftCalc(i),dr=m3Draft[id],cnt=dr??i.qty,diff=round2(c.variance+(cnt-i.qty)),rk=risky(i);
     return `<div class="ci ${t?'touched':''}"><div class="top3"><div><div class="hd">${sku(i)}</div><div class="nm">${esc(i.name)}</div><div class="mn">Định mức tối thiểu ${i.min} ${esc(i.unit)}</div></div>${pill(i)}</div>
-    <div class="cmp"><div><small>Theo sổ</small><b>${c.expected}</b></div><div class="act"><small>Thực đếm</small><b>${i.qty}</b> ${su}</div><div><small>Chênh lệch</small><span class="vb ${diff?'diff':'same'}">${diff?`Lệch: ${diff>0?'+'+diff:diff}`:'Khớp (0)'}</span></div></div>
-    <div class="stline">${t?'✓ Đã kiểm':'Chưa kiểm'} · Đầu ca ${c.base} · Nhập/xuất/hủy trong ca ${c.moved>0?'+':''}${c.moved} ${su}</div>${status(i)!=='ok'&&i.altNote?`<div class="alt">Thay thế tạm: ${esc(i.altNote)}</div>`:''}
-    <div class="adj"><button class="m5" type="button" data-adj="${id}" data-d="-5" aria-label="Trừ 5 ${su}"><b>−5</b><small>${su}</small></button><button class="m1" type="button" data-adj="${id}" data-d="-1" aria-label="Trừ 1 ${su}"><b>−1</b><small>${su}</small></button><button class="p1" type="button" data-adj="${id}" data-d="1" aria-label="Cộng 1 ${su}"><b>+1</b><small>${su}</small></button><button class="p5" type="button" data-adj="${id}" data-d="5" aria-label="Cộng 5 ${su}"><b>+5</b><small>${su}</small></button></div>
-    <div class="st"><button class="ok" type="button" data-match="${id}" aria-pressed="${t}">${t?'✔ Đã xác nhận':'✔ Khớp số liệu'}</button><button type="button" data-real="${id}">✎ Nhập số thực tế</button><button class="zero" type="button" data-zero="${id}">Báo hủy / Hết</button></div></div>`}).join('')
+    <div class="cmp"><div><small>Theo sổ</small><b>${c.expected}</b></div><div class="act"><small>Thực đếm${dr!=null?' · chưa lưu':''}</small><b class="${dr!=null?'dr':''}">${cnt}</b> ${su}</div><div><small>Chênh lệch</small><span class="vb ${diff?'diff':'same'}">${diff?`Lệch: ${diff>0?'+'+diff:diff}`:'Khớp (0)'}</span></div></div>
+    <div class="stline">${t?(S.touchedHow[id]==='count'?'✓ Đã đếm':'✓ Đã xác nhận nhanh'):'Chưa kiểm'} · Đầu ca ${c.base} · Nhập/xuất/hủy trong ca ${c.moved>0?'+':''}${c.moved} ${su}</div>${isExpired(i)?`<div class="alt" style="color:#FCA5A5;border-color:#6B1F1F">Có ${expiredQty(i)} ${su} đã quá hạn — không dùng, hãy báo hủy</div>`:''}${status(i)!=='ok'&&i.altNote?`<div class="alt">Thay thế tạm: ${esc(i.altNote)}</div>`:''}
+    <div class="adjl">Sửa số đếm trên kệ</div><div class="adj"><button class="m5" type="button" data-adj="${id}" data-d="-5" aria-label="Số đếm trừ 5 ${su}"><b>−5</b><small>${su}</small></button><button class="m1" type="button" data-adj="${id}" data-d="-1" aria-label="Số đếm trừ 1 ${su}"><b>−1</b><small>${su}</small></button><button class="p1" type="button" data-adj="${id}" data-d="1" aria-label="Số đếm cộng 1 ${su}"><b>+1</b><small>${su}</small></button><button class="p5" type="button" data-adj="${id}" data-d="5" aria-label="Số đếm cộng 5 ${su}"><b>+5</b><small>${su}</small></button></div>
+    ${dr!=null?`<div class="st"><button class="ok" type="button" data-dsave="${id}" aria-pressed="true">✔ Lưu số đếm ${cnt}</button><button type="button" data-dcancel="${id}">Hủy số đang đếm</button></div>`
+    :`<div class="st"><button class="ok" type="button" data-match="${id}" aria-pressed="${t}">${t?(S.touchedHow[id]==='count'?'✔ Đã đếm':'✔ Đã xác nhận'):(rk?'✎ Đếm & xác nhận':'✔ Khớp số liệu')}</button><button type="button" data-real="${id}">✎ Nhập số thực tế</button><button type="button" data-use="${id}">Xuất dùng</button><button class="zero" type="button" data-zero="${id}">Báo hủy / Hết</button></div>`}</div>`}).join('')
     :`<div class="empty" style="color:var(--muted-on-dark)">${q?'Không tìm thấy nguyên liệu phù hợp.':m3Scope==='fast'?'Chưa có nguyên liệu nào trong danh sách kiểm nhanh. Vào Chế độ 2 → Chi tiết để bật.':'Chưa có nguyên liệu nào đang theo dõi.'}</div>`;
   const C=$('#counts');
-  C.querySelectorAll('[data-adj]').forEach(b=>b.onclick=()=>{try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}changeQty(b.dataset.adj,+b.dataset.d,{touch:true,type:'check',reason:'Điều chỉnh khi kiểm cuối ca'});});
-  C.querySelectorAll('[data-match]').forEach(b=>b.onclick=()=>{const id=b.dataset.match;if(S.touched.includes(id)){toast('Món này đã được xác nhận trong ca');return;}
-    commit('Đã xác nhận khớp số liệu',()=>touch(id));});
+  C.querySelectorAll('[data-adj]').forEach(b=>b.onclick=()=>{try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}const id=b.dataset.adj,i=item(id);m3Draft[id]=Math.max(0,round2((m3Draft[id]??i.qty)+(+b.dataset.d)));renderCountList();});
+  C.querySelectorAll('[data-dsave]').forEach(b=>b.onclick=()=>{const id=b.dataset.dsave,i=item(id),v=m3Draft[id];delete m3Draft[id];const d=round2(v-i.qty);
+    if(!d){commit('Số đếm khớp sổ — đã xác nhận',()=>touch(id,'count'));return;}
+    changeQty(id,d,{type:'check',reason:'Kiểm đếm cuối ca',touch:true,how:'count'});});
+  C.querySelectorAll('[data-dcancel]').forEach(b=>b.onclick=()=>{delete m3Draft[b.dataset.dcancel];renderCountList();});
+  C.querySelectorAll('[data-match]').forEach(b=>b.onclick=()=>{const id=b.dataset.match,i=item(id);if(S.touched.includes(id)){toast('Món này đã được kiểm trong ca');return;}
+    if(risky(i)){realCount(id,true);return;}
+    commit('Đã xác nhận khớp số liệu',()=>touch(id,'quick'));});
   C.querySelectorAll('[data-real]').forEach(b=>b.onclick=()=>realCount(b.dataset.real));
+  C.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>useModal(b.dataset.use));
   C.querySelectorAll('[data-zero]').forEach(b=>b.onclick=()=>openWasteModal(b.dataset.zero));
+}
+function useModal(id){const i=item(id);
+  openModal(`<h3 id="mTitle">Xuất dùng trong ca</h3><div class="sub">${sku(i)} ${esc(i.name)} — đang có <b class="mono">${i.qty} ${esc(i.unit)}</b></div><div class="quick">${[1,2,5].map(n=>`<button type="button" data-uq="${n}">${n}</button>`).join('')}</div>
+  <div class="field"><label for="useIn">Số lượng (${esc(i.unit)})</label><input id="useIn" type="number" min="0.1" step="any" value="1" inputmode="decimal" autofocus></div>
+  <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Hủy</button><button class="btn btn-primary" id="mOk" type="button">Xuất dùng</button></div>`);
+  document.querySelectorAll('[data-uq]').forEach(b=>b.onclick=()=>{$('#useIn').value=b.dataset.uq;});on('#mCancel',closeModal);
+  const go=()=>{const q=+$('#useIn').value;if(!(q>0))return;closeModal();changeQty(id,-q,{type:'out',reason:'Xuất pha chế trong ca'});};
+  on('#mOk',go);$('#useIn').onkeydown=e=>{if(e.key==='Enter')go();};
 }
 document.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{m3Scope=b.dataset.scope;renderCounts();});
 $('#staffSel').onchange=e=>{S.currentStaff=e.target.value;save();toast('Đang trực: '+S.currentStaff);};
@@ -1550,9 +1629,9 @@ function staffModal(){
 }
 $('#staffBtn').onclick=staffModal;
 $('#m3Search').addEventListener('input',e=>{m3Q=e.target.value;renderCountList();});
-function realCount(id){
+function realCount(id,forced){
   const i=item(id);
-  openModal(`<h3 id="mTitle">Nhập số đếm thực tế</h3><div class="sub">${sku(i)} ${esc(i.name)} — hệ thống <b class="mono">${i.qty} ${esc(i.unit)}</b> · theo sổ <span class="mono">${shiftCalc(i).expected}</span></div>
+  openModal(`<h3 id="mTitle">Nhập số đếm thực tế</h3><div class="sub">${sku(i)} ${esc(i.name)} — hệ thống <b class="mono">${i.qty} ${esc(i.unit)}</b> · theo sổ <span class="mono">${shiftCalc(i).expected}</span></div>${forced?'<div class="wprev" style="margin-top:8px">Món này cần đếm thực tế (sắp hết, cận date hoặc có giao dịch trong ca) — không xác nhận nhanh được.</div>':''}
   <div class="field" id="fwReal"><label for="realIn">Số lượng đếm được trên kệ (${esc(i.unit)})</label><input id="realIn" type="number" min="0" step="any" inputmode="decimal" value="${i.qty}" autofocus><span class="msg" id="eReal"></span></div>
   <div class="diff" id="realDiff">Chênh lệch: 0</div>
   <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Hủy</button><button class="btn btn-primary" id="mOk" type="button">Lưu số thực tế</button></div>`);
@@ -1562,13 +1641,13 @@ function realCount(id){
   on('#mCancel',closeModal);
   const ok=()=>{const v=+inp.value;if(inp.value===''||!(v>=0)){$('#fwReal').classList.add('err');$('#eReal').textContent='Nhập số ≥ 0.';inp.focus();return;}
     closeModal();const d=round2(v-i.qty);
-    if(!d){commit('Số đếm khớp hệ thống — đã đánh dấu đã kiểm',()=>touch(id));return;}
-    changeQty(id,d,{type:'check',reason:'Cân bằng kiểm kê cuối ca',touch:true});};
+    if(!d){commit('Số đếm khớp hệ thống — đã đánh dấu đã đếm',()=>touch(id,'count'));return;}
+    changeQty(id,d,{type:'check',reason:'Cân bằng kiểm kê cuối ca',touch:true,how:'count'});};
   on('#mOk',ok);inp.onkeydown=e=>{if(e.key==='Enter')ok();};
 }
 document.querySelectorAll('[data-dev]').forEach(b=>b.onclick=()=>{S.dev=b.dataset.dev;save();renderCounts();});
 function shiftText(ls){
-  return `BIÊN BẢN GIAO CA – BeanStock\nNgày ${ls.date}, lúc ${ls.time}\nNgười giao ca: ${ls.actor}\nĐã kiểm: ${ls.checked}/${ls.total} món\n\nChênh lệch kiểm đếm (${(ls.variances||[]).length} món):\n`+((ls.variances||[]).map(v=>`- ${item(v.id)?.sku?item(v.id).sku+' ':''}${v.name}: theo sổ ${v.expected??v.base} → thực đếm ${v.qty} ${v.unit} (${v.diff>0?'+':''}${v.diff})`).join('\n')||'- Không có chênh lệch')+`\n\nCần đặt hàng (${ls.lowCount} món): ${(ls.lowNames||[]).join(', ')||'Không'}`;
+  return `BIÊN BẢN GIAO CA – BeanStock\nNgày ${ls.date}, lúc ${ls.time}\nNgười giao ca: ${ls.actor}\nĐã kiểm: ${ls.checked}/${ls.total} món (đếm thật ${ls.counted??0}, xác nhận nhanh ${Math.max(0,ls.checked-(ls.counted??0))})\n\nChênh lệch kiểm đếm (${(ls.variances||[]).length} món):\n`+((ls.variances||[]).map(v=>`- ${item(v.id)?.sku?item(v.id).sku+' ':''}${v.name}: theo sổ ${v.expected??v.base} → thực đếm ${v.qty} ${v.unit} (${v.diff>0?'+':''}${v.diff})`).join('\n')||'- Không có chênh lệch')+`\n\nCần đặt hàng (${ls.lowCount} món): ${(ls.lowNames||[]).join(', ')||'Không'}`;
 }
 function shiftModal(ls){
   const text=shiftText(ls);
@@ -1577,14 +1656,15 @@ function shiftModal(ls){
   on('#mCopy',()=>copyText(text,'Đã sao chép biên bản giao ca — dán vào Zalo gửi quản lý'));on('#mCancel',closeModal);
 }
 $('#finishBtn').onclick=()=>{
+  if(Object.keys(m3Draft).length){ask('Còn số đếm chưa lưu',`Có ${Object.keys(m3Draft).length} món đang đếm dở (chưa bấm Lưu số đếm). Lưu từng món trước, hoặc bỏ các số này để giao ca.`,'Bỏ số chưa lưu & giao ca',()=>{m3Draft={};renderCountList();$('#finishBtn').click();});return;}
   const target=scopeList(),ids=target.map(i=>i.id),n=S.touched.filter(id=>ids.includes(id)).length;
   const finish=()=>{
     const variances=activeItems().map(i=>({i,c:shiftCalc(i)})).filter(x=>x.c.variance!==0).map(({i,c})=>({id:i.id,name:i.name,unit:i.unit,base:c.base,expected:c.expected,qty:i.qty,diff:c.variance}));
     const low=activeItems().filter(i=>status(i)!=='ok');
     commit(`Đã giao ca — ${variances.length} món lệch, ${low.length} món cần đặt hàng`,()=>{
-      S.lastShift={time:nowTime(),date:new Date().toLocaleDateString('vi-VN'),actor:('Barista: '+(S.currentStaff||'Barista')),checked:n,total:ids.length,variances,lowCount:low.length,lowNames:low.map(i=>i.name),dismissed:false};
+      S.lastShift={time:nowTime(),date:new Date().toLocaleDateString('vi-VN'),actor:('Barista: '+(S.currentStaff||'Barista')),checked:n,counted:ids.filter(id=>S.touched.includes(id)&&S.touchedHow[id]==='count').length,total:ids.length,variances,lowCount:low.length,lowNames:low.map(i=>i.name),dismissed:false};
       addLog({itemId:null,type:'shift',delta:0,prevQty:0,nextQty:0,itemName:'Biên bản giao ca',icon:'',unit:'',reason:`Đã kiểm ${n}/${ids.length} món · ${variances.length} món lệch · ${low.length} món cần đặt`,actor:('Barista: '+(S.currentStaff||'Barista')),unitPrice:0});
-      S.touched=[];S.shiftBase={};S.shiftStart=new Date().toISOString();activeItems().forEach(i=>{S.shiftBase[i.id]=i.qty;});
+      S.touched=[];S.touchedHow={};m3Draft={};S.shiftBase={};S.shiftStart=new Date().toISOString();activeItems().forEach(i=>{S.shiftBase[i.id]=i.qty;});
     });
     shiftModal(S.lastShift);
   };
@@ -1628,34 +1708,41 @@ $('#scanBtn').onclick=()=>{
 
 /* ---- Giọng nói ---- */
 const NUMW={'một':1,'hai':2,'ba':3,'bốn':4,'tư':4,'năm':5,'sáu':6,'bảy':7,'tám':8,'chín':9,'mười':10};
-function parseCmd(text){
-  const t=String(text).toLowerCase().normalize('NFC');
+function parseCmd(text,pickId){
+  const t=String(text).toLowerCase().normalize('NFC').replace(/(\d+)\s*phẩy\s*(\d+)/g,'$1.$2');
   let n=(t.match(/\d+(?:[.,]\d+)?/)||[])[0];n=n?parseFloat(n.replace(',','.')):null;
   if(n==null)for(const [w,v] of Object.entries(NUMW))if(new RegExp('(^|\\s)'+w+'(\\s|$)').test(t)){n=v;break;}
-  let best=null,bl=0;activeItems().forEach(i=>(i.kw||[]).concat([i.name.toLowerCase()]).forEach(k=>{if(k&&t.includes(k)&&k.length>bl){best=i;bl=k.length;}}));
+  if(/(^|\s)rưỡi(\s|$)/.test(t))n=(n||1)+0.5;else if(n==null&&/(^|\s)nửa(\s|$)/.test(t))n=0.5;
   const add=/(nhập|thêm|cộng)/.test(t);
-  return best&&n>0?{item:best,n,add}:null;
+  if(pickId){const it=item(pickId);return it&&n>0?{item:it,n,add,choices:null}:null;}
+  let best=null,bl=0,bk='';activeItems().forEach(i=>(i.kw||[]).concat([i.name.toLowerCase()]).forEach(k=>{if(k&&t.includes(k)&&k.length>bl){best=i;bl=k.length;bk=k;}}));
+  if(!best||!(n>0))return null;
+  /* Từ khóa chung một chữ (VD "sữa") trùng tên nhiều món → hỏi lại thay vì tự đoán */
+  const others=bk.includes(' ')?[]:activeItems().filter(i=>i!==best&&i.name.toLowerCase().split(/[\s()]+/).includes(bk));
+  return {item:best,n,add,choices:others.length?[best,...others]:null};
 }
 let rec=null;
 function stopVoice(){if(rec){try{rec.abort();}catch(e){}rec=null;}}
 function voiceModal(prefill,autoListen){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  openModal(`<h3 id="mTitle">${ic('mic',18)}Lệnh giọng nói</h3><div class="sub">Ví dụ: "Xuất 4 hộp sữa tươi", "Nhập 2 túi đá". Lệnh chỉ được thực hiện khi bạn bấm <b>Thực hiện</b>.</div>
+  openModal(`<h3 id="mTitle">${ic('mic',18)}Lệnh giọng nói</h3><div class="sub">Ví dụ: "Xuất 4 hộp sữa tươi", "Xuất nửa hộp kem", "Nhập 2 túi đá". Lệnh chỉ được thực hiện khi bạn bấm <b>Thực hiện</b>.</div>
   <button class="mic" id="mic" type="button" aria-label="Bắt đầu nghe giọng nói" ${SR?'':'disabled'}>${ic('mic',36)}</button>
   <div style="text-align:center;font-weight:500;min-height:22px" id="heard" aria-live="polite">${SR?(autoListen?'Đang nghe…':'Bấm micro để nói, hoặc sửa lệnh bên dưới'):'Trình duyệt không hỗ trợ giọng nói — hãy gõ lệnh bên dưới'}</div>
   <div class="field"><label for="cmdIn">Lệnh (sửa được)</label><input id="cmdIn" value="${esc(prefill||'')}" placeholder="VD: Xuất 4 hộp sữa tươi"></div>
   <div class="parsed" id="cmdPreview" aria-live="polite"></div>
   <div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Đóng</button><button class="btn btn-primary" id="mRun" type="button">Thực hiện</button></div>`);
-  const preview=()=>{const r=parseCmd($('#cmdIn').value),p=$('#cmdPreview');
+  let pick=null;
+  const preview=()=>{const r=parseCmd($('#cmdIn').value,pick),p=$('#cmdPreview');
     if(!$('#cmdIn').value.trim()){p.className='parsed';p.textContent='Chưa có lệnh.';$('#mRun').disabled=true;return;}
     if(!r){p.className='parsed bad';p.textContent='Chưa hiểu lệnh — cần có số lượng và tên nguyên liệu, VD: "Xuất 4 hộp sữa tươi".';$('#mRun').disabled=true;return;}
+    if(r.choices){p.className='parsed';p.innerHTML=`Câu lệnh khớp nhiều món — chọn món cần ${r.add?'nhập':'xuất'} ${r.n}:<div class="row" style="flex-wrap:wrap;margin-top:8px;gap:6px">${r.choices.map(c=>`<button class="mini" type="button" data-vc="${c.id}">${esc(c.sku)} ${esc(shortName(c.name))}</button>`).join('')}</div>`;p.querySelectorAll('[data-vc]').forEach(b=>b.onclick=()=>{pick=b.dataset.vc;preview();});$('#mRun').disabled=true;return;}
     p.className='parsed ok';p.textContent=`✓ Đã hiểu lệnh: ${r.add?'Nhập':'Xuất'} ${r.n} ${r.item.unit} — ${r.item.sku} ${r.item.name} (đang có ${r.item.qty})`;$('#mRun').disabled=false;};
-  $('#cmdIn').oninput=preview;preview();
+  $('#cmdIn').oninput=()=>{pick=null;preview();};preview();
   on('#mCancel',closeModal);
-  on('#mRun',()=>{const r=parseCmd($('#cmdIn').value);if(!r)return;closeModal();changeQty(r.item.id,r.add?r.n:-r.n,{touch:S.mode===3,reason:(r.add?'Nhập':'Xuất')+' bằng lệnh giọng nói'});});
+  on('#mRun',()=>{const r=parseCmd($('#cmdIn').value,pick);if(!r||r.choices)return;closeModal();changeQty(r.item.id,r.add?r.n:-r.n,{touch:S.mode===3,reason:(r.add?'Nhập':'Xuất')+' bằng lệnh giọng nói'});});
   const listen=()=>{if(!SR)return;stopVoice();try{rec=new SR();rec.lang='vi-VN';rec.interimResults=true;
     $('#mic').classList.add('live');$('#heard').textContent='Đang nghe…';
-    rec.onresult=e=>{const txt=[...e.results].map(r=>r[0].transcript).join(' ');$('#heard').textContent='"'+txt+'"';$('#cmdIn').value=txt;preview();
+    rec.onresult=e=>{const txt=[...e.results].map(r=>r[0].transcript).join(' ');$('#heard').textContent='"'+txt+'"';$('#cmdIn').value=txt;pick=null;preview();
       if(e.results[e.results.length-1].isFinal){$('#heard').textContent='"'+txt+'" — kiểm tra rồi bấm Thực hiện';}};
     rec.onerror=()=>{const m=$('#mic');if(m)m.classList.remove('live');const h=$('#heard');if(h)h.textContent='Không truy cập được micro — hãy gõ lệnh bên dưới';};
     rec.onend=()=>{const m=$('#mic');if(m)m.classList.remove('live');};
