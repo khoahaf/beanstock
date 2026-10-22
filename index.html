@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>BeanStock — Quản lý kho quán cà phê</title>
+<meta name="description" content="BeanStock: quản lý tồn kho quán cà phê — thiết lập kho, đặt hàng, báo hủy theo hạn dùng và kiểm kho giao ca.">
+<meta name="theme-color" content="#5B21B6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Crect width=%2724%27 height=%2724%27 rx=%275%27 fill=%27%235B21B6%27/%3E%3Cg fill=%27none%27 stroke=%27%23fff%27 stroke-width=%271.75%27 stroke-linecap=%27round%27%3E%3Cellipse cx=%2712%27 cy=%2712%27 rx=%275%27 ry=%277.5%27 transform=%27rotate(35 12 12)%27/%3E%3Cpath d=%27M9 6.5c3 2.5 1.7 8 6 11%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -107,7 +110,7 @@ input,select,textarea{font:inherit;color:var(--color-text)}
 .logo{width:36px;height:36px;border-radius:var(--radius);background:var(--color-primary);color:#fff;display:grid;place-items:center;flex:none}
 .bn{font-weight:600;font-size:18px;line-height:1.2}
 .bsub{font-size:var(--fs-xs);color:var(--color-nav-muted)}
-.ver{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--color-nav-muted);border:1px solid var(--color-nav-2);border-radius:var(--radius-sm);padding:1px 6px}
+.ver{margin-left:auto;font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--color-nav-muted);border:1px solid var(--color-nav-2);border-radius:var(--radius-sm);padding:1px 6px}
 .nav-label{font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-nav-muted);padding:0 var(--space-3);margin-bottom:var(--space-2)}
 .tabs,.tools{display:flex;flex-direction:column;gap:var(--space-1)}
 .tab,.tool{display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:var(--touch);padding:var(--space-2) var(--space-3);border-radius:var(--radius);color:var(--color-nav-text);font-size:var(--fs-sm);font-weight:500;text-align:left;transition:background var(--dur)}
@@ -143,7 +146,7 @@ main{max-width:var(--container);margin:0 auto;padding:var(--space-8) var(--space
 .rationale p{margin:0;font-size:var(--fs-sm);color:var(--color-text-2);max-width:72ch}
 .rationale .hide-ux{border:1px solid var(--color-primary-bd);background:var(--color-surface);color:var(--color-primary);border-radius:var(--radius);padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);font-weight:600;height:max-content;white-space:nowrap;min-height:var(--touch)}
 .ux-box{outline:1px dashed var(--color-primary);outline-offset:4px;border-radius:var(--radius)}
-.ux-chip{font-family:var(--font-mono);font-size:11px;background:var(--color-primary);color:#fff;border-radius:var(--radius-sm);padding:2px 6px;white-space:nowrap;line-height:1.4}
+.ux-chip{font-family:var(--font-mono);font-size:var(--fs-xs);background:var(--color-primary);color:#fff;border-radius:var(--radius-sm);padding:2px 6px;white-space:nowrap;line-height:1.4}
 body.ux-off .ux-only{display:none!important}
 body.ux-off .ux-box{outline:none}
 .sample-tag{font-size:var(--fs-xs);font-weight:500;color:var(--color-accent-ink);background:var(--color-accent-soft);border:1px solid var(--color-warning-bd);border-radius:var(--radius-sm);padding:1px 6px;white-space:nowrap;vertical-align:2px;letter-spacing:0}
@@ -239,8 +242,8 @@ body.ux-off .ux-box{outline:none}
 .pack .pc{font-family:var(--font-mono);font-size:var(--fs-xs);font-weight:600;width:36px;height:36px;border-radius:var(--radius);background:var(--color-surface);border:1px solid var(--color-border-strong);display:grid;place-items:center;flex:none;color:var(--color-text-2)}
 .pack .ck{margin-left:auto;width:20px;height:20px;border-radius:var(--radius-sm);border:1px solid var(--color-border-strong);display:grid;place-items:center;color:#fff;flex:none;background:var(--color-surface)}
 .pack[aria-pressed="true"] .ck{background:var(--color-primary);border-color:var(--color-primary)}
-.pack h4{font-size:var(--fs-sm)}
-.pack p{margin:2px 0 var(--space-1);color:var(--color-muted);font-size:var(--fs-sm)}
+.pack .pb{display:block;min-width:0}.pack .pt{display:block;font-size:var(--fs-sm);font-weight:600;color:var(--color-text)}
+.pack .pd{display:block;margin:2px 0 var(--space-1);color:var(--color-muted);font-size:var(--fs-sm)}
 .codes{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--color-muted)}
 .alt-start{margin-top:var(--space-3);border:1px dashed var(--color-border-strong);border-radius:var(--radius);padding:var(--space-3);display:grid;gap:var(--space-2)}
 .alt-start .row .btn{flex:1 1 180px}
@@ -258,7 +261,7 @@ body.ux-off .ux-box{outline:none}
 .ptable td,.stable td{padding:var(--space-2);font-size:var(--fs-sm)}
 .ptable th.on,.ptable td.on{background:var(--color-primary)!important;color:#fff}
 .ptable td.on small{color:#E9D5FF}
-.ptable td small,.stable td small{color:var(--color-muted)}
+.ptable td small,.stable td small,.qty small{color:var(--color-muted);font-size:var(--fs-xs)}
 .ptable .pn{white-space:nowrap}
 .stable .sn{font-weight:600}
 .stable td:first-child,.stable td:last-child,.stable td.num{white-space:nowrap}
@@ -317,7 +320,7 @@ th[aria-sort="ascending"] .thb::after{content:"↑"}
 th[aria-sort="descending"] .thb::after{content:"↓"}
 .sortsel{display:none}
 .namecell{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px var(--space-3);align-items:baseline}
-.namebtn{font-weight:600;text-align:left;color:var(--color-text);padding:0}
+.namebtn{font-weight:600;text-align:left;color:var(--color-text);padding:2px 0;min-height:24px}
 .namebtn:hover{color:var(--color-primary);text-decoration:underline;text-underline-offset:3px}
 .bar{height:6px;border-radius:999px;background:var(--color-border);margin-top:6px;overflow:hidden;max-width:140px}
 .bar i{display:block;height:100%;border-radius:999px}
@@ -393,10 +396,10 @@ th[aria-sort="descending"] .thb::after{content:"↓"}
 .shiftinfo{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;font-size:var(--fs-sm);color:var(--color-text-2)}
 .shiftinfo .lbl{font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-primary);background:var(--color-primary-soft);border-radius:var(--radius-sm);padding:1px 8px}
 .staff{display:inline-flex;align-items:center;gap:var(--space-2);font-weight:500}
-.staff select{border:1px solid var(--color-border-strong);border-radius:var(--radius-sm);padding:var(--space-1) var(--space-2);min-height:36px;background:var(--color-surface);font-weight:600}
-.vlink{color:var(--color-primary);font-size:var(--fs-sm);font-weight:500;text-decoration:underline;text-underline-offset:3px;min-height:36px}
+.staff select{border:1px solid var(--color-border-strong);border-radius:var(--radius-sm);padding:var(--space-1) var(--space-2);min-height:var(--touch);background:var(--color-surface);font-weight:600}
+.vlink{color:var(--color-primary);font-size:var(--fs-sm);font-weight:500;text-decoration:underline;text-underline-offset:3px;min-height:var(--touch)}
 .view-sw{display:flex;align-items:center;gap:var(--space-1);background:var(--color-bg);border-radius:var(--radius);padding:var(--space-1)}
-.view-sw button{border-radius:var(--radius-sm);padding:var(--space-1) var(--space-3);font-weight:500;font-size:var(--fs-sm);min-height:36px;color:var(--color-text-2)}
+.view-sw button{border-radius:var(--radius-sm);padding:var(--space-1) var(--space-3);font-weight:500;font-size:var(--fs-sm);min-height:var(--touch);color:var(--color-text-2)}
 .view-sw button[aria-pressed="true"]{background:var(--color-surface);color:var(--color-primary);font-weight:600;box-shadow:var(--shadow-1)}
 .device{margin:var(--space-4) auto 0;max-width:520px;transition:max-width .2s}
 .device.pos{max-width:1080px}
@@ -410,9 +413,9 @@ th[aria-sort="descending"] .thb::after{content:"↓"}
 .big.alarm{background:var(--color-surface);border-color:var(--color-error-bd);color:var(--color-error-ink)}
 .big.alarm:hover{background:var(--color-error-soft)}
 .voice-hint{display:flex;gap:var(--space-3);align-items:center;flex-wrap:wrap;margin-top:var(--space-3);font-size:var(--fs-sm);color:var(--color-muted)}
-.voice-hint button{border:1px solid var(--color-border-strong);background:var(--color-surface);color:var(--color-text-2);border-radius:999px;padding:var(--space-1) var(--space-3);font-size:var(--fs-sm);min-height:36px}
+.voice-hint button{border:1px solid var(--color-border-strong);background:var(--color-surface);color:var(--color-text-2);border-radius:999px;padding:var(--space-1) var(--space-3);font-size:var(--fs-sm);min-height:var(--touch)}
 .count-head{margin-top:var(--space-8)}
-.count-head h3{font-size:var(--fs-h3)}
+.count-head h2{font-size:var(--fs-h3)}
 .m3ctl{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-2);margin-top:var(--space-3)}
 .m3ctl>*{min-width:0}
 .scope{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-1);background:var(--color-bg);border-radius:var(--radius);padding:var(--space-1)}
@@ -437,7 +440,7 @@ th[aria-sort="descending"] .thb::after{content:"↓"}
 .cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius);background:var(--color-surface-2)}
 .cmp>div{padding:var(--space-2) var(--space-3);min-width:0;border-left:1px solid var(--color-border);font-size:var(--fs-sm);color:var(--color-muted)}
 .cmp>div:first-child{border-left:0}
-.cmp small{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp small{display:block;font-size:var(--fs-xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--color-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cmp b{color:var(--color-text);font-size:var(--fs-h3);font-weight:600}
 .cmp .act b{color:var(--color-primary)}
 .ci .dr{color:var(--color-accent-ink)!important}
@@ -448,11 +451,11 @@ th[aria-sort="descending"] .thb::after{content:"↓"}
 .ci .stline{margin-top:var(--space-2);font-size:var(--fs-xs);color:var(--color-muted)}
 .ci .alt{margin-top:var(--space-2);font-size:var(--fs-xs);color:var(--color-accent-ink);background:var(--color-accent-soft);border:1px solid var(--color-warning-bd);border-radius:var(--radius-sm);padding:var(--space-1) var(--space-2)}
 .ci .alt.bad{color:var(--color-error-ink);background:var(--color-error-soft);border-color:var(--color-error-bd);font-weight:600}
-.adjl{margin-top:var(--space-3);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-muted)}
+.adjl{margin-top:var(--space-3);font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-muted)}
 .adj{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-2);margin-top:var(--space-1)}
 .adj button{border-radius:var(--radius);padding:var(--space-1) 2px;font-weight:600;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;min-width:0;border:1px solid var(--color-border-strong);background:var(--color-surface);transition:background var(--dur)}
 .adj button b{font-size:var(--fs-body)}
-.adj button small{font-size:11px;font-weight:500;color:var(--color-muted);white-space:nowrap}
+.adj button small{font-size:var(--fs-xs);font-weight:500;color:var(--color-muted);white-space:nowrap}
 .adj .m5,.adj .m1{color:var(--color-error-ink)}
 .adj .p1,.adj .p5{color:var(--color-success-ink)}
 .adj button:hover{background:var(--color-surface-2)}
@@ -540,8 +543,8 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
 /* ---------- Responsive: Tablet (8 cột) ---------- */
 @media (max-width:1023px){
   .app{grid-template-columns:minmax(0,1fr)}
-  .side{position:fixed;left:0;top:0;bottom:0;width:min(84vw,300px);transform:translateX(-100%);transition:transform var(--dur) ease-out;box-shadow:none}
-  body.nav-open .side{transform:none;box-shadow:var(--shadow-2)}
+  .side{position:fixed;left:0;top:0;bottom:0;width:min(84vw,300px);transform:translateX(-100%);visibility:hidden;transition:transform var(--dur) ease-out,visibility 0s linear var(--dur);box-shadow:none}
+  body.nav-open .side{transform:none;visibility:visible;transition:transform var(--dur) ease-out;box-shadow:var(--shadow-2)}
   .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity var(--dur);z-index:35}
   body.nav-open .scrim{opacity:1;pointer-events:auto}
   .mbar{display:flex;position:sticky;top:0;z-index:30;align-items:center;gap:var(--space-3);background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:var(--space-2) var(--space-4);min-height:60px}
@@ -554,12 +557,12 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
   .kpi{grid-column:span 4}
   .goal{padding:var(--space-3) var(--space-4)}
 }
+#v3 .scope button,#v3 .search input{min-height:var(--touch)}
 /* ---------- Responsive: Mobile (4 cột) ---------- */
 @media (max-width:639px){
   .grid2,.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
   .grid2>*,.grid2.wide>:first-child,.grid2.wide>:last-child{grid-column:span 4}
   .kpi{grid-column:span 2;padding:var(--space-3)}
-  .kpi .h{font-size:11px}
   .kpi .v{font-size:var(--fs-h3)}
   .kpi .f,.kpi .base{font-size:var(--fs-xs)}
   .toolbar h1{font-size:var(--fs-h2)}
@@ -602,7 +605,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
   .rtable tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-2);padding:var(--space-3);border-bottom:1px solid var(--color-border)}
   .rtable td{padding:0;border:0;background:none!important}
   .rtable td.rn{grid-column:1/-1}
-  .rtable td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:600;color:var(--color-muted);letter-spacing:.04em;text-transform:uppercase}
+  .rtable td[data-l]::before{content:attr(data-l);display:block;font-size:var(--fs-xs);font-weight:600;color:var(--color-muted);letter-spacing:.04em;text-transform:uppercase}
   .rtable input,.rtable input[type=date]{width:100%}
 }
 </style>
@@ -611,7 +614,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
 
 <div class="app">
 <aside class="side" id="side" aria-label="Điều hướng chính">
-  <div class="brand"><span class="logo" data-ic="bean" data-s="20"></span><div><div class="bn">BeanStock</div><div class="bsub">Quản lý kho quán cà phê</div></div><span class="ver">V4.0</span></div>
+  <div class="brand"><span class="logo" data-ic="bean" data-s="20"></span><div><div class="bn">BeanStock</div><div class="bsub">Quản lý kho quán cà phê</div></div><span class="ver">V4.1</span></div>
   <div>
     <div class="nav-label" id="navLbl">Không gian làm việc</div>
     <nav class="tabs" role="tablist" aria-labelledby="navLbl" aria-orientation="vertical">
@@ -684,7 +687,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
       <div class="acts2">
         <button class="btn btn-soft" id="addBtn" type="button"><span data-ic="plus"></span>Thêm nguyên liệu</button>
         <button class="btn btn-danger" id="wasteBtn" type="button"><span data-ic="trash"></span>Báo hủy / Hao hụt</button>
-        <button class="btn btn-primary" id="orderBtn" type="button">Tạo đơn nhập hàng</button>
+        <button class="btn btn-primary" id="orderBtn" type="button">Tạo đơn đặt hàng</button>
       </div>
     </div>
     <div id="localNotice"></div>
@@ -706,18 +709,18 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
           <div class="row between" style="align-items:flex-start"><h2>Đề xuất đặt thêm hàng (theo định mức)</h2><span class="ux-chip ux-only">PO → GRN</span></div>
           <div class="formula">Đề xuất nhập = Định mức × 1.6 (dự phòng cuối tuần) − Tồn hiện tại − Đang chờ giao</div>
           <div id="reorder"></div>
-          <button class="btn btn-dark" id="approveBtn" type="button">Lập đơn đặt hàng</button>
+          <button class="btn btn-dark" id="approveBtn" type="button">Tạo đơn đặt hàng</button>
           <div id="poList"></div>
         </div>
         <div class="card">
           <div class="row between" style="align-items:flex-start">
             <div><h2>Xu hướng tiêu thụ 7 ngày qua <span class="sample-tag">Dữ liệu mẫu</span></h2><div class="sub">Đơn vị quy đổi: ly phục vụ &amp; hộp sữa tiêu hao</div></div>
-            <span class="pill ok">Đỉnh: Thứ Bảy</span>
+            <span class="pill ok">Đỉnh (mẫu): Thứ Bảy</span>
           </div>
           <div class="chart" id="chart" role="img" aria-label="Biểu đồ mẫu: T2 182, T3 168, T4 175, T5 190, T6 225, T7 310, CN 295 ly"></div>
           <div class="chart-x" id="chartX" aria-hidden="true"></div>
           <div class="legend"><span><i class="la"></i>Ngày thường</span><span><i class="lb"></i>Ngày cao điểm (≥ 220 ly)</span></div>
-          <div class="chart-foot"><span>Top tiêu hao: <b>Sữa tươi Dalatmilk (18 hộp/ngày)</b></span><b class="mono">+22% vs tuần trước</b></div>
+          <div class="chart-foot"><span>Top tiêu hao (mẫu): <b>Sữa tươi Dalatmilk (18 hộp/ngày)</b></span><b class="mono">+22% vs tuần trước (mẫu)</b></div>
           <div class="real" id="chartReal"></div>
         </div>
         <div class="card">
@@ -738,7 +741,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
     </div>
     <div class="toolbar"><div><h1>Quầy Bar &amp; Kiểm ca</h1><div class="sub">Xuất dùng, báo hủy và kiểm kho đối chiếu cuối ca.</div></div></div>
     <div class="ctl-strip">
-      <div class="shiftinfo"><span class="lbl">Ca trực</span><span class="mono">Ca Tối 14:00 – 22:30</span><span aria-hidden="true">•</span><label class="staff">Barista <select id="staffSel" aria-label="Nhân viên đang trực"></select></label><button class="vlink" id="staffBtn" type="button">Quản lý nhân viên</button><span class="ux-chip ux-only">Fitts's Law · Touch Targets</span></div>
+      <div class="shiftinfo"><span class="lbl">Ca trực</span><span class="mono" id="shiftTime"></span><span aria-hidden="true">•</span><label class="staff">Barista <select id="staffSel" aria-label="Nhân viên đang trực"></select></label><button class="vlink" id="staffBtn" type="button">Quản lý nhân viên</button><span class="ux-chip ux-only">Fitts's Law · Touch Targets</span></div>
       <div class="view-sw" role="group" aria-label="Khung hiển thị">
         <button data-dev="phone" type="button" aria-pressed="true">Điện thoại (1 tay)</button>
         <button data-dev="pos" type="button" aria-pressed="false">Máy POS / Tablet</button>
@@ -753,7 +756,7 @@ textarea.copy{width:100%;min-height:200px;border:1px solid var(--color-border-st
         </div>
         <div class="voice-hint"><span>Câu lệnh mẫu:</span><button id="sampleCmd" type="button">"Xuất 4 hộp sữa tươi"</button></div>
         <div class="count-head">
-          <h3 id="countTitle">Kiểm kho cuối ca</h3><div class="sub">Đối chiếu số đầu ca với số đếm thực tế trên kệ</div>
+          <h2 id="countTitle">Kiểm kho cuối ca</h2><div class="sub">Đối chiếu số đầu ca với số đếm thực tế trên kệ</div>
         </div>
         <div class="m3ctl">
           <div class="scope" role="group" aria-label="Phạm vi kiểm kho"><button type="button" data-scope="fast" aria-pressed="true">Món chính cuối ca</button><button type="button" data-scope="all" aria-pressed="false">Toàn bộ kho</button></div>
@@ -1032,13 +1035,13 @@ let lastFocus=null;
 function openModal(html,wide){
   if(!$('#modal').classList.contains('on'))lastFocus=document.activeElement;
   $('#sheet').className='sheet'+(wide?' wide':'');
-  $('#sheet').innerHTML=`<button class="sheet-x" type="button" aria-label="Đóng hộp thoại">${ic('x',20)}</button>`+html;$('#modal').classList.add('on');$('#sheet').scrollTop=0;
+  $('#sheet').innerHTML=`<button class="sheet-x" type="button" aria-label="Đóng hộp thoại">${ic('x',20)}</button>`+html;$('#modal').classList.add('on');$('.app').inert=true;$('#sheet').scrollTop=0;
   $('#sheet .sheet-x').onclick=closeModal;
   const f=$('#sheet').querySelector('[autofocus]')||$('#sheet').querySelector('input,select,textarea,button:not(.sheet-x)')||$('#sheet .sheet-x');if(f)f.focus();
 }
-function closeModal(){stopVoice();$('#modal').classList.remove('on');if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
+function closeModal(){stopVoice();$('#modal').classList.remove('on');$('.app').inert=false;if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
-window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if($('#modal').classList.contains('on'))closeModal();else if(document.body.classList.contains('nav-open'))setNav(false);});
+window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if($('#modal').classList.contains('on'))closeModal();else if(document.body.classList.contains('nav-open'))setNav(false,true);});
 function ask(title,msg,okLabel,onOk,danger){
   openModal(`<h3 id="mTitle">${title}</h3><div class="sub" style="font-size:var(--fs-sm)">${msg}</div><div class="acts"><button class="btn btn-soft" id="mCancel" type="button">Hủy</button><button class="btn ${danger?'btn-danger':'btn-dark'}" id="mOk" type="button">${okLabel}</button></div>`);
   on('#mCancel',closeModal);on('#mOk',()=>{closeModal();onOk();});
@@ -1077,13 +1080,13 @@ function renderHeader(){
 }
 function setMode(m,focus){S.mode=m;save();renderAll();if(m===2)renderChart();if(focus)$('#tab'+m).focus();}
 document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick=()=>{setMode(+t.dataset.mode);setNav(false);window.scrollTo({top:0,behavior:'smooth'});};
+  t.onclick=()=>{const fromNav=document.body.classList.contains('nav-open');setMode(+t.dataset.mode);setNav(false);window.scrollTo({top:0,behavior:'smooth'});if(fromNav){const h=$('#v'+S.mode+' h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}};
   t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();setMode(S.mode%3+1,true);}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();setMode((S.mode+1)%3+1,true);}};
 });
 /* Menu hamburger (màn hình < 1024px) */
-function setNav(open){document.body.classList.toggle('nav-open',open);$('#menuBtn').setAttribute('aria-expanded',open);$('#menuBtn').setAttribute('aria-label',open?'Đóng menu điều hướng':'Mở menu điều hướng');if(open){const t=$('.tab[aria-selected="true"]');if(t)t.focus();}}
+function setNav(open,returnFocus){const was=document.body.classList.contains('nav-open');document.body.classList.toggle('nav-open',open);if(!open&&was&&returnFocus&&getComputedStyle($('#menuBtn')).display!=='none'&&$('.mbar').offsetParent!==null)$('#menuBtn').focus();$('#menuBtn').setAttribute('aria-expanded',open);$('#menuBtn').setAttribute('aria-label',open?'Đóng menu điều hướng':'Mở menu điều hướng');if(open){const t=$('.tab[aria-selected="true"]');if(t)t.focus();}}
 $('#menuBtn').onclick=()=>setNav(!document.body.classList.contains('nav-open'));
-$('#scrim').onclick=()=>setNav(false);
+$('#scrim').onclick=()=>setNav(false,true);
 document.querySelectorAll('.side .tool').forEach(b=>b.addEventListener('click',()=>setNav(false)));
 function setUx(v){S.ux=v;save();renderHeader();toast(v?'UX Inspector đang bật — hiển thị lý do thiết kế':'Đã tắt UX Inspector');}
 $('#uxBtn').onclick=()=>setUx(!S.ux);
@@ -1116,21 +1119,21 @@ function renderWizard(){
   }else if(w.step===1){
     const n=w.packs.length;
     body=`<div class="tip"><div>Tích chọn các nhóm nguyên liệu quán bạn đang dùng. Nhóm bị bỏ chọn sẽ được ẩn khỏi cả 3 chế độ (bật lại được ở bộ lọc "Đã ẩn").<div class="ux-only" style="margin-top:8px"><span class="ux-chip">Smart Defaults</span></div></div></div>
-    ${PACKS.map(p=>`<button class="pack" type="button" aria-pressed="${w.packs.includes(p.id)}" data-pack="${p.id}"><span class="pc">${p.code}</span><div><h4>${p.name}</h4><p>${p.desc}</p><span class="codes">${p.items.map(id=>SKU[id]).join(' · ')}</span></div><span class="ck">${ic('check',14)}</span></button>`).join('')}
+    ${PACKS.map(p=>`<button class="pack" type="button" aria-pressed="${w.packs.includes(p.id)}" data-pack="${p.id}"><span class="pc">${p.code}</span><span class="pb"><span class="pt">${p.name}</span><span class="pd">${p.desc}</span><span class="codes">${p.items.map(id=>SKU[id]).join(' · ')}</span></span><span class="ck">${ic('check',14)}</span></button>`).join('')}
     <div class="alt-start"><div class="eyebrow">Hoặc dùng danh sách của quán bạn</div><div class="row" style="flex-wrap:wrap"><button class="btn btn-soft" id="startCsv" type="button">${ic('plus',14)}Nhập từ Excel / Google Sheets</button><button class="btn btn-soft" id="startEmpty" type="button">Bắt đầu với kho trống</button></div></div>
     <div class="wiz-foot"><p>Đã chọn <b>${n}</b> / ${PACKS.length} nhóm nguyên liệu mẫu.</p><button class="btn btn-primary" id="next1" type="button" ${n?'':'disabled'}>Áp dụng gói mẫu &amp; sang bước 2</button></div>`;
   }else if(w.step===2){
-    const pv=['arabica','sua-tuoi','ly'].map(item).filter(Boolean);
+    const act=PACK_ITEMS.map(item).filter(i=>i&&i.active!==false);const pv=(act.length?act:PACK_ITEMS.map(item).filter(Boolean)).slice(0,3);
     body=`<div class="tip"><div><b>Mức báo động</b> quyết định khi nào hệ thống nhắc bạn đặt hàng. Mức <b>Cân bằng</b> phù hợp với hầu hết quán mới mở.</div></div>
     <div class="lvl">${Object.entries(LEVELS).map(([k,v])=>`<button type="button" data-lvl="${k}" aria-pressed="${w.level===k}"><b>${v.name} <span class="mono">${v.f.toFixed(1)}x</span></b><span>${v.hint}</span></button>`).join('')}</div>
     <div class="preview"><div class="eyebrow">Xem trước định mức tối thiểu sẽ áp dụng</div><table class="ptable"><thead><tr><th>Nguyên liệu</th>${Object.entries(LEVELS).map(([k,v])=>`<th class="${k===w.level?'on':''}" style="text-align:right">${v.f.toFixed(1)}x</th>`).join('')}</tr></thead><tbody>${pv.map(i=>{const b=SEED.find(s=>s.id===i.id).min;return `<tr><td>${sku(i)} <span class="pn">${esc(shortName(i.name))}</span></td>${Object.entries(LEVELS).map(([k,v])=>`<td class="num ${k===w.level?'on':''}" style="text-align:right">${Math.max(1,Math.round(b*v.f))} <small>${esc(shortUnit(i.unit))}</small></td>`).join('')}</tr>`}).join('')}</tbody></table></div>
     ${(()=>{const c=S.items.filter(i=>i.minCustom&&SEED.some(x=>x.id===i.id)).length;return c?`<div class="sub" style="margin-top:8px">Giữ nguyên định mức của ${c} món bạn đã chỉnh tay.</div>`:'';})()}<div class="wiz-foot"><button class="btn btn-primary" id="next2" type="button">Lưu mức báo động &amp; sang bước 3</button><button class="btn btn-soft" id="back" type="button">Quay lại</button></div>`;
   }else{
     const list=activeItems();
-    body=`<div class="tip"><div>Thử nhập lô hàng vừa nhận từ nhà cung cấp. Số tồn trên <b>kệ kho</b> sẽ cập nhật ngay lập tức.</div></div>
+    body=`<div class="tip"><div>Thử nhập lô hàng vừa nhận từ nhà cung cấp. Số tồn trên <b>kệ kho</b> sẽ cập nhật ngay lập tức. Chưa nhận hàng thì bấm <b>Bỏ qua</b> — tồn kho giữ nguyên.</div></div>
     <div class="field"><label for="fItem">Nguyên liệu</label><select id="fItem">${list.map(i=>`<option value="${i.id}">${esc(i.sku)} — ${esc(i.name)}</option>`).join('')}</select></div>
     <div class="field"><label for="fQty" id="fQtyLbl">Số lượng nhập</label><input id="fQty" type="number" min="1" step="1" value="5" inputmode="numeric"></div>
-    <div class="wiz-foot"><button class="btn btn-primary" id="next3" type="button" ${list.length?'':'disabled'}>Nhập kho &amp; hoàn tất</button><button class="btn btn-soft" id="back" type="button">Quay lại</button></div>`;
+    <div class="wiz-foot"><button class="btn btn-primary" id="next3" type="button" ${list.length?'':'disabled'}>Nhập kho &amp; hoàn tất</button><button class="btn btn-soft" id="skip3" type="button">Bỏ qua — hoàn tất không nhập hàng</button><button class="btn btn-soft" id="back" type="button">Quay lại</button></div>`;
   }
   $('#wizard').innerHTML=`<div class="eyebrow">Hướng dẫn 3 bước</div><h2 style="margin-top:2px">Thiết lập kho cho quán của bạn</h2>
   <div class="sub">Không cần nhập từng món từ đầu — dùng gói dữ liệu mẫu rồi tinh chỉnh sau.</div>
@@ -1148,6 +1151,7 @@ function renderWizard(){
   on('#next2',()=>commit('Đã lưu mức báo động (giữ nguyên các món bạn đã chỉnh tay)',()=>{const f=LEVELS[w.level].f;S.items.forEach(i=>{const b=SEED.find(s=>s.id===i.id);if(b&&!i.minCustom)i.min=Math.max(1,Math.round(b.min*f));});w.step=3;}));
   on('#next3',()=>{const id=$('#fItem').value,q=Math.max(1,Math.round(+$('#fQty').value||0)),i=item(id);
     commit(`Nhập ${q} ${i.unit} ${i.sku} — thiết lập hoàn tất`,()=>{applyQty(i,i.qty+q,'in','Nhập thử lô đầu tiên (hướng dẫn)');w.done=true;});});
+  on('#skip3',()=>commit('Đã hoàn tất thiết lập — tồn kho giữ nguyên',()=>{w.done=true;}));
   on('#back',()=>{w.step--;save();renderWizard();});
   on('#startCsv',()=>openImportModal('replace'));
   on('#startEmpty',()=>ask('Bắt đầu với kho trống?','Xóa 10 nguyên liệu mẫu để bạn tự thêm nguyên liệu của quán ở Chế độ 2 (hoặc nhập từ Excel). Hoàn tác được ngay sau đó.','Bắt đầu kho trống',()=>commit('Đã tạo kho trống — thêm nguyên liệu ở Chế độ 2',()=>{S.items=[];S.cart={};S.touched=[];S.shiftBase={};S.wiz.done=true;})));
@@ -1187,7 +1191,7 @@ function renderKPIs(){
   const rate=usedCost>0?wasteCost/usedCost*100:0;
   const lossHtml=wl.length
     ?`<div class="v">${rate.toFixed(1)}% <small style="color:var(--muted)">−${fmt(wasteCost)}</small></div><div class="f">${rate<3?'Dưới chuẩn ngành 3.0%':'Vượt chuẩn ngành 3.0%'} · ${wl.length} lần ghi nhận</div><div class="base">= Hao hụt ÷ Tổng giá trị đã xuất dùng (7 ngày)</div>`
-    :`<div class="v">1.8% <small style="color:var(--muted)">−240.000đ</small></div><div class="f">Thấp hơn chuẩn ngành 3.0% <span class="sample-tag">Dữ liệu mẫu</span></div><div class="base">Chưa có ghi nhận hủy thực tế trong 7 ngày</div>`;
+    :`<div class="v">— <small style="color:var(--muted)">chưa có dữ liệu</small></div><div class="f">Chưa có lần báo hủy nào trong 7 ngày qua</div><div class="base">Tỷ lệ sẽ tự tính khi barista hoặc quản lý ghi nhận hủy / hao hụt (chuẩn ngành &lt; 3.0%)</div>`;
   $('#kpis').innerHTML=`
    <div class="kpi"><div class="h">Tổng giá trị kho${ic('coins')}</div><div class="v"><span style="white-space:nowrap">${fmt(total)}</span></div><div class="f">${list.length} mã đang hoạt động</div><div class="base">Đơn đặt hàng chờ giao: <span class="mono">${fmt(poVal)}</span></div></div>
    <button class="kpi warn ${fSt==='alert'?'active-filter':''}" id="kLow" type="button" aria-pressed="${fSt==='alert'}"><div class="h">Sắp hết / Hết hàng${ic('alert')}</div><div class="v">${low.length} <small>mã · ${out.length} hết sạch</small></div><div class="f">${needItems().length} cần đặt · ${low.length-needItems().length} đã có đơn chờ giao</div><div class="go"><span>${fSt==='alert'?'Đang lọc — nhấn để bỏ lọc':'Lọc &amp; đặt hàng ngay'}</span><span>→</span></div></button>
@@ -1240,7 +1244,7 @@ function renderReorder(){
   const list=activeItems().filter(i=>status(i)!=='ok').sort((a,b)=>a.qty/a.min-b.qty/b.min);
   const picked=Object.keys(S.cart).filter(id=>item(id)&&item(id).active!==false).length;
   const need=needItems().length;
-  $('#orderBtn').innerHTML=`${ic('truck')}${picked?`Tạo đơn nhập hàng (${picked} đã chọn)`:`Tạo đơn nhập hàng (${need} cần đặt)`}`;
+  $('#orderBtn').innerHTML=`${ic('truck')}${picked?`Tạo đơn đặt hàng (${picked} đã chọn)`:`Tạo đơn đặt hàng (${need} cần đặt)`}`;
   const roRow=i=>{const pq=pendingOrderQty(i.id),sg=suggest(i);return `<div class="ro-item"><div><div class="rn">${sku(i)}<b>${esc(shortName(i.name))}</b></div><small>${esc(i.sup)} · Tồn <span class="mono">${i.qty}</span> ${esc(shortUnit(i.unit))} · Đề xuất <em>+${sg} ${esc(shortUnit(i.unit))}${packText(i,sg)}</em></small>${pq?`<small class="pd">Đang chờ giao: +${pq} ${esc(i.unit)}</small>`:''}${status(i)==='out'&&i.altNote?`<small class="alt">Thay thế tạm: ${esc(i.altNote)}</small>`:''}</div><button type="button" data-ro="${i.id}" aria-pressed="${!!S.cart[i.id]}" ${sg||S.cart[i.id]?'':'disabled'}>${S.cart[i.id]?'✓ Đã chọn':sg?'Chọn đặt':'Đủ (chờ giao)'}</button></div>`};
   const top=topupItems();
   $('#reorder').innerHTML=`<div class="sub">${need} món cần đặt (dưới định mức) · ${top.length} món nên đặt thêm cho cuối tuần</div>`+(list.length?list.map(roRow).join(''):`<div class="empty">Không có mặt hàng nào dưới định mức.</div>`)+(top.length?`<div class="eyebrow" style="margin-top:14px">Nên đặt thêm cho cuối tuần</div>`+top.map(roRow).join(''):'');
@@ -1261,7 +1265,7 @@ function orderModal(){
   const cartIds=Object.keys(S.cart);
   const pre=i=>cartIds.length?cartIds.includes(i.id):(status(i)!=='ok'&&suggest(i)>0);
   const groups={};list.forEach(i=>{(groups[i.sup]=groups[i.sup]||[]).push(i);});
-  openModal(`<h3 id="mTitle">${ic('truck',18)}Lập đơn đặt hàng</h3><div class="sub">Đã tích sẵn ${cartIds.length?'các món bạn chọn':'các món dưới định mức'}. Có thể tích thêm món khác để đặt chủ động. Đề xuất = Định mức × 1.6 − Tồn − Đang chờ giao.</div>
+  openModal(`<h3 id="mTitle">${ic('truck',18)}Tạo đơn đặt hàng</h3><div class="sub">Đã tích sẵn ${cartIds.length?'các món bạn chọn':'các món dưới định mức'}. Có thể tích thêm món khác để đặt chủ động. Đề xuất = Định mức × 1.6 − Tồn − Đang chờ giao.</div>
   <div class="row" style="flex-wrap:wrap;margin-top:10px"><div class="search" style="margin:0;flex:1 1 220px">${ic('search')}<input id="olQ" type="search" placeholder="Tìm món, mã hàng, nhà cung cấp…" aria-label="Tìm trong đơn"></div><label class="check" style="margin:0"><input type="checkbox" id="olOnly" ${list.length>15?'checked':''}> Chỉ hiện món cần đặt / đã chọn</label></div>
   ${Object.entries(groups).map(([sup,its])=>`<div class="og"><div class="grp">${esc(sup)}</div>${its.map(i=>{const v=S.cart[i.id]??suggest(i);return `<label class="order-line ${pre(i)?'':'off'}" data-row="${i.id}" data-name="${esc(searchText(i))}"><input type="checkbox" data-ock="${i.id}" ${pre(i)?'checked':''} aria-label="Chọn đặt ${esc(i.name)}"><span style="min-width:0">${sku(i)} ${esc(shortName(i.name))}<br><small style="color:var(--muted)" class="mono">Tồn ${i.qty} · min ${i.min}${pendingOrderQty(i.id)?` · chờ ${pendingOrderQty(i.id)}`:''}${status(i)==='ok'&&suggest(i)>0?' · nên đặt thêm':''} · ${fmt(i.price)}/${esc(shortUnit(i.unit))}</small></span><span class="qcol"><span><input type="number" min="0" step="1" data-ol="${i.id}" value="${v}" aria-label="Số lượng đặt ${esc(i.name)}"> <small>${esc(shortUnit(i.unit))}</small></span>${i.packRate>1?`<button type="button" class="pk" data-pk="${i.id}">+1 ${esc(i.packUnit)} (${i.packRate})</button>`:''}</span></label>`;}).join('')}</div>`).join('')}
   <div class="row between" style="margin-top:14px"><b>Tạm tính (<span id="olN">0</span> món)</b><b class="mono" id="olTotal"></b></div>
@@ -1363,7 +1367,7 @@ function openItemModal(editId=null){
     }else if(tab==='batch'){
       const bs=it.batches.filter(b=>b.qty>0).slice().sort(byExp);
       body=`<div class="sub" style="margin-top:12px">Xuất kho luôn trừ lô có hạn gần nhất trước (FEFO). Tổng các lô: <b class="mono">${round2(bs.reduce((t,b)=>t+b.qty,0))} / ${it.qty} ${esc(it.unit)}</b>.</div>
-      ${bs.length?bs.map(b=>`<div class="bt-row"><div><b>${esc(b.lot)}</b><div class="sub mono" style="margin:0">Còn ${b.qty} ${esc(shortUnit(it.unit))} · ${b.expDate?`<span style="color:${bExp(b)<=4?'var(--red)':'inherit'}">HSD ${viDate(b.expDate)} · ${expLabel(bExp(b))}</span>`:'Không ghi hạn'}</div></div><div class="ba">${editBatch===b.id?`<input type="date" id="beExp" value="${b.expDate||''}" aria-label="Ngày hết hạn mới" style="width:150px"><button class="mini" type="button" data-bsave="${b.id}">Lưu</button>`:`<button class="mini" type="button" data-bedit="${b.id}">${ic('edit',14)}HSD</button>`}<button class="mini" type="button" data-bwaste="${b.id}" style="color:var(--red)">${ic('trash',14)}Hủy lô</button></div></div>`).join(''):`<div class="empty">Chưa có lô nào được ghi hạn sử dụng.</div>`}
+      ${bs.length?bs.map(b=>`<div class="bt-row"><div><b>${esc(b.lot)}</b><div class="sub mono" style="margin:0">Còn ${b.qty} ${esc(shortUnit(it.unit))} · ${b.expDate?`<span style="color:${bExp(b)<0?'var(--red)':bExp(b)<=4?'var(--color-accent-ink)':'inherit'}">HSD ${viDate(b.expDate)} · ${expLabel(bExp(b))}</span>`:'Không ghi hạn'}</div></div><div class="ba">${editBatch===b.id?`<input type="date" id="beExp" value="${b.expDate||''}" aria-label="Ngày hết hạn mới" style="width:150px"><button class="mini" type="button" data-bsave="${b.id}">Lưu</button>`:`<button class="mini" type="button" data-bedit="${b.id}">${ic('edit',14)}HSD</button>`}<button class="mini" type="button" data-bwaste="${b.id}" style="color:var(--red)">${ic('trash',14)}Hủy lô</button></div></div>`).join(''):`<div class="empty">Chưa có lô nào được ghi hạn sử dụng.</div>`}
       <div class="fbox"><h4 class="eyebrow">Thêm lô nhập mới</h4>
         <div class="frow"><div class="field"><label for="bLot">Tên lô</label><input id="bLot" value="Lô nhập ${new Date().toLocaleDateString('vi-VN')}"></div>
         <div class="field" id="fwBq"><label for="bQty">Số lượng (${esc(it.unit)})</label><input id="bQty" type="number" min="0.1" step="any" value="${it.packRate>1?it.packRate:1}"><span class="msg" id="eBq"></span></div></div>
@@ -1684,6 +1688,7 @@ function renderCounts(){
   $('#shiftBox').innerHTML=ls&&!ls.dismissed?`<div class="shift-done" role="status"><div>${ic('check',14)} <b>Biên bản giao ca ${esc(ls.time)} · ${esc(ls.date)}</b> — ${esc(ls.actor||'')}<br><span class="mono">Đã kiểm ${ls.checked}/${ls.total} · ${(ls.variances||[]).length} món lệch · ${ls.lowCount} món cần đặt<br>Đếm thật ${ls.counted??0} · xác nhận nhanh ${Math.max(0,ls.checked-(ls.counted??0))} · Ca mới bắt đầu lúc ${S.shiftStart?new Date(S.shiftStart).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}):'—'}</span></div><div class="row"><button class="btn" id="viewShift" type="button">${ic('receipt',14)}Xem / Copy biên bản</button><button class="btn" id="newShift" type="button">Ẩn biên bản</button></div></div>`:'';
   on('#newShift',()=>{S.lastShift.dismissed=true;save();renderCounts();});
   on('#viewShift',()=>shiftModal(S.lastShift));
+  const st0=S.shiftStart?new Date(S.shiftStart):null;$('#shiftTime').textContent=st0?`Bắt đầu ${st0.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})} · ${String(st0.getDate()).padStart(2,'0')}/${String(st0.getMonth()+1).padStart(2,'0')}`:'Chưa bắt đầu';
   const ss=$('#staffSel');if(ss)ss.innerHTML=S.staff.map(n=>`<option ${n===S.currentStaff?'selected':''}>${esc(n)}</option>`).join('');
   renderCountList();
 }
@@ -1864,8 +1869,7 @@ $('#voiceBtn').onclick=()=>voiceModal('',true);
 $('#sampleCmd').onclick=()=>voiceModal('Xuất 4 hộp sữa tươi',false);
 
 /* ================== KHỞI ĐỘNG ================== */
-function renderAll(){S.items.forEach(syncItemExp);ensureShiftBase();renderHeader();renderWizard();renderShelf();renderNotice();renderBanner();renderKPIs();renderTable();renderReorder();renderChartReal();renderLogs();renderCounts();}
-$('#today').textContent='Cập nhật lúc '+nowTime()+' · '+new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit'});
+function renderAll(){$('#today').textContent='Cập nhật lúc '+nowTime()+' · '+new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit'});S.items.forEach(syncItemExp);ensureShiftBase();renderHeader();renderWizard();renderShelf();renderNotice();renderBanner();renderKPIs();renderTable();renderReorder();renderChartReal();renderLogs();renderCounts();}
 save();renderAll();renderChart();checkHandoff();
 </script>
 </body>
